@@ -6,7 +6,7 @@ import {
     Status,
 } from '../database/models/animal';
 
-export type GetAnimalQuery = {
+export type GetAnimalsQuery = {
     type?: AnimalType;
     sex?: Sex;
     status?: Status;

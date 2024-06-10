@@ -4,7 +4,7 @@ import { ILike, In } from 'typeorm';
 import { animalRepository } from '../repositories/animal.repository';
 import { Status } from '../database/models/animal';
 import { generateDateBetweenQuery } from '../utils/generate-date-between-query';
-import { GetAnimalQuery } from './types';
+import { GetAnimalsQuery } from './types';
 import { shuffleRandomSort } from '../utils/shuffle-random-sort';
 
 const getAll = async (req: Request, res: Response): Promise<void> => {
@@ -18,7 +18,7 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
         order,
         sortBy,
         search,
-    } = req.query as GetAnimalQuery;
+    } = req.query as GetAnimalsQuery;
 
     const statusQuery =
         (status?.includes(',') ? In(status.split(',')) : status) ||

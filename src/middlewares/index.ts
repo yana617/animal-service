@@ -1,4 +1,4 @@
-import { asyncErrorHandler } from './asyncErrorHandler';
+import { asyncErrorHandler } from './async-error-handler';
 
 export {
   asyncErrorHandler,
