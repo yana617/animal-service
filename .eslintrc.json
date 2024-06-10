@@ -9,6 +9,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "quotes": [2, "single", { "avoidEscape": true }],
     "@typescript-eslint/semi": [
       2,
       "always"

@@ -7,6 +7,6 @@ import { animalController } from '../controllers/animal.controller';
 const router = express.Router();
 
 router.get('/', asyncErrorHandler(animalController.getAll));
-router.post('/', asyncErrorHandler(animalController.createAnimal));
+// router.post('/', asyncErrorHandler(animalController.createAnimal));
 
 export const animalsRoute = router;

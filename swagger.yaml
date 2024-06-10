@@ -1,0 +1,205 @@
+openapi: 3.0.0
+info:
+  title: Animal Service API
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:1083/'
+    description: Development
+  - url: 'https://animal-service.dogcatbmpz.by/'
+    description: Production
+tags:
+  - name: Animals
+    description: CRUD for animals
+paths:
+  /animals:
+    get:
+      summary: Get animals (only homeless by default)
+      tags:
+        - Animals
+      parameters:
+        - name: type
+          in: query
+          description: animal type filter
+          required: false
+          schema:
+            type: string
+            enum:
+              - dog
+              - cat
+              - other
+        - name: place
+          in: query
+          description: animal place filter
+          required: false
+          schema:
+            type: string
+            enum:
+              - main-house
+              - cat-house
+              - quarantine-house
+              - aviary
+              - on-temporary-hold
+        - name: sex
+          in: query
+          description: animal sex filter
+          required: false
+          schema:
+            type: string
+            enum:
+              - male
+              - female
+        - name: status
+          in: query
+          description: animal status filter
+          required: false
+          schema:
+            type: string
+            enum:
+              - homeless
+              - adopted
+              - preparation
+              - died
+              - lost
+        - name: birthday_from
+          in: query
+          description: 'animal birthday filter (age less than 3 years, for example)'
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: birthday_to
+          in: query
+          description: 'animal birthday filter (age more than 10 years, for example)'
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: order
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: sortBy
+          in: query
+          description: sort by which field
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns existing animals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Animal'
+components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
+  schemas:
+    Animal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date-time
+        secondBirthday:
+          type: string
+          format: date-time
+        place:
+          type: string
+          enum:
+            - main-house
+            - cat-house
+            - quarantine-house
+            - aviary
+            - on-temporary-hold
+        type:
+          type: string
+          enum:
+            - dog
+            - cat
+            - other
+        room:
+          type: integer
+        sex:
+          type: string
+          enum:
+            - male
+            - female
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - homeless
+            - adopted
+            - preparation
+            - died
+            - lost
+        advertisingText:
+          type: string
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+        sterilized:
+          type: boolean
+        takenHomeDate:
+          type: string
+          format: date-time
+          nullable: true
+        curator_id:
+          type: string
+          format: uuid
+          nullable: true
+        photos:
+          type: array
+          items:
+            type: string
+    ValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              msg:
+                type: string
+              param:
+                type: string
+              location:
+                type: string
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        error:
+          type: string

@@ -2,63 +2,65 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import yaml from 'js-yaml';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
 
 import type { Express, Request, Response } from 'express';
 
 import router from './src/routes';
-import { AppDataSource } from './src/database';
 
 dotenv.config();
 
-export const createApp = async (): Promise<Express> => {
-  await AppDataSource.initialize();
+const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml'));
 
-  const app: Express = express();
+export const createApp = (): Express => {
+    const app: Express = express();
 
-  app.use((req: Request, res: Response, next) => {
-    req.headers.origin = req.headers.origin ?? req.headers.host;
-    next();
-  });
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-  const {
-    UI_LOCAL_URL,
-    UI_PROD_URL,
-    LOCAL_TEST_URL,
-    // DOCKER_AUTH_SERVICE_URL,
-  } = process.env;
+    app.use((req: Request, res: Response, next) => {
+        req.headers.origin = req.headers.origin ?? req.headers.host;
+        next();
+    });
 
-  const whitelist = [UI_LOCAL_URL, UI_PROD_URL, LOCAL_TEST_URL];
-  const corsOptions = {
-    origin: (origin: string | undefined, callback) => {
-      if (whitelist.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-    optionsSuccessStatus: 200,
-  };
+    const { DOCKER_ANIMAL_SERVICE_URL, UI_LOCAL_URL, UI_PROD_URL, PORT } =
+        process.env;
 
-  if (process.env.NODE_ENV === 'production') {
-    app.use(cors(corsOptions));
-  }
-  if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan(':method [:status] :url  :response-time ms'));
-  }
+    const whitelist = [UI_LOCAL_URL, UI_PROD_URL, DOCKER_ANIMAL_SERVICE_URL];
+    if (process.env.NODE_ENV !== 'production') {
+        const POSTMAN_URL = `localhost:${PORT}`;
+        whitelist.push(POSTMAN_URL);
+    }
+    const corsOptions = {
+        origin: (origin: string | undefined, callback) => {
+            if (whitelist.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        credentials: true,
+        optionsSuccessStatus: 200,
+    };
 
-  app.use('/static', express.static('img'));
+    if (process.env.NODE_ENV !== 'test') {
+        app.use(cors(corsOptions));
+        app.use(morgan(':method [:status] :url  :response-time ms'));
+    }
 
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-  app.use(express.json({ limit: '10mb' }));
+    app.use('/static', express.static('img'));
 
-  app.use(router);
+    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    app.use(express.json({ limit: '10mb' }));
 
-  app.use((err, req: Request, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ success: false, error: err.message });
-  });
+    app.use(router);
 
-  return app;
+    app.use((err, req: Request, res, next) => {
+        console.error(err.stack);
+        res.status(500).json({ success: false, error: err.message });
+    });
+
+    return app;
 };

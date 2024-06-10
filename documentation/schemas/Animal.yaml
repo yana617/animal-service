@@ -1,0 +1,51 @@
+type: object
+properties:
+    id:
+        type: string
+        format: uuid
+    name:
+        type: string
+    birthday:
+        type: string
+        format: date-time
+    secondBirthday:
+        type: string
+        format: date-time
+    place:
+        type: string
+        enum: [main-house, cat-house, quarantine-house, aviary, on-temporary-hold]
+    type:
+        type: string
+        enum: [dog, cat, other]
+    room:
+        type: integer
+    sex:
+        type: string
+        enum: [male, female]
+    description:
+        type: string
+        nullable: true
+    status:
+        type: string
+        enum: [homeless, adopted, preparation, died, lost]
+    advertisingText:
+        type: string
+        nullable: true
+    height:
+        type: integer
+        nullable: true
+    sterilized:
+        type: boolean
+    takenHomeDate:
+        type: string
+        format: date-time
+        nullable: true
+    curator_id:
+        type: string
+        format: uuid
+        nullable: true
+    photos:
+        type: array
+        items:
+            type: string
+

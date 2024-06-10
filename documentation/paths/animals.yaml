@@ -1,0 +1,83 @@
+get:
+    summary: Get animals (only homeless by default)
+    tags:
+        - 'Animals'
+    parameters:
+        - name: type
+          in: query
+          description: animal type filter
+          required: false
+          schema:
+              type: string
+              enum: [dog, cat, other]
+        - name: place
+          in: query
+          description: animal place filter
+          required: false
+          schema:
+              type: string
+              enum:
+                  [
+                      main-house,
+                      cat-house,
+                      quarantine-house,
+                      aviary,
+                      on-temporary-hold,
+                  ]
+        - name: sex
+          in: query
+          description: animal sex filter
+          required: false
+          schema:
+              type: string
+              enum: [male, female]
+        - name: status
+          in: query
+          description: animal status filter
+          required: false
+          schema:
+              type: string
+              enum: [homeless, adopted, preparation, died, lost]
+        - name: birthday_from
+          in: query
+          description: animal birthday filter (age less than 3 years, for example)
+          required: false
+          schema:
+              type: string
+              format: date-time
+        - name: birthday_to
+          in: query
+          description: animal birthday filter (age more than 10 years, for example)
+          required: false
+          schema:
+              type: string
+              format: date-time
+        - name: order
+          in: query
+          description: Sort order
+          required: false
+          schema:
+              type: string
+              enum:
+                  - asc
+                  - desc
+        - name: sortBy
+          in: query
+          description: sort by which field
+          required: false
+          schema:
+              type: string
+    responses:
+        '200':
+            description: Returns existing animals
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                            data:
+                                type: array
+                                items:
+                                    $ref: '../schemas/Animal.yaml'
