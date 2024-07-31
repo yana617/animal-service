@@ -27,10 +27,11 @@ export const createApp = (): Express => {
     const { DOCKER_ANIMAL_SERVICE_URL, UI_LOCAL_URL, UI_PROD_URL, PORT } =
         process.env;
 
-    const whitelist = [UI_LOCAL_URL, UI_PROD_URL, DOCKER_ANIMAL_SERVICE_URL];
+    const whitelist = [UI_PROD_URL, DOCKER_ANIMAL_SERVICE_URL];
     if (process.env.NODE_ENV !== 'production') {
         const POSTMAN_URL = `localhost:${PORT}`;
         whitelist.push(POSTMAN_URL);
+        whitelist.push(UI_LOCAL_URL);
     }
     const corsOptions = {
         origin: (origin: string | undefined, callback) => {

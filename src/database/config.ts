@@ -4,46 +4,52 @@ dotenv.config();
 
 type Environment = 'development' | 'test' | 'production';
 
-interface Config {
-  host: string;
-  port: string;
-  username: string;
-  password: string;
-  database: string;
+type Config = {
+    host: string;
+    port: string;
+    username: string;
+    password: string;
+    database: string;
 };
 
 const {
-  POSTGRES_DB: database,
-  POSTGRES_USERNAME: username,
-  POSTGRES_PASSWORD: password,
-  POSTGRES_HOST: host,
-  POSTGRES_PORT: port,
+    POSTGRES_DB: database,
+    POSTGRES_USERNAME: username,
+    POSTGRES_PASSWORD: password,
+    POSTGRES_HOST: host,
+    POSTGRES_PORT: port,
+    NODE_ENV,
 } = process.env;
 
-if (!host || !database || !username || !password || !port) {
-  throw Error('No config provided');
+if (
+    (NODE_ENV !== 'test' && (!database || !host)) ||
+    !username ||
+    !password ||
+    !port
+) {
+    throw Error('No config provided');
 }
 
 const common = {
-  username,
-  password,
-  port,
+    username,
+    password,
+    port,
 };
 
 export const config: Record<Environment, Config> = {
-  development: {
-    ...common,
-    database,
-    host,
-  },
-  test: {
-    ...common,
-    database: 'test-db',
-    host: 'localhost',
-  },
-  production: {
-    ...common,
-    database,
-    host,
-  },
+    development: {
+        ...common,
+        database: database as string,
+        host: host as string,
+    },
+    test: {
+        ...common,
+        database: 'test-db',
+        host: 'localhost',
+    },
+    production: {
+        ...common,
+        database: database as string,
+        host: host as string,
+    },
 };
