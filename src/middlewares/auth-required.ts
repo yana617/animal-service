@@ -2,7 +2,7 @@ import { ERRORS } from '../translates';
 
 import { authServiceApi } from '../api/authService';
 
-export const authRequired = async (req, res, next) => {
+export const authRequired = async (req, res, next): Promise<any> => {
     try {
         if (!req.token) {
             return res

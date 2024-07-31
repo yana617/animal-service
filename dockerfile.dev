@@ -13,4 +13,8 @@ COPY . .
 
 EXPOSE 1083
 
-CMD [ "npm", "run", "dev" ]
+COPY ./bin/dev-docker-entrypoint.sh /bin/dev-docker-entrypoint.sh
+
+RUN chmod +x /bin/dev-docker-entrypoint.sh
+
+ENTRYPOINT ["/bin/dev-docker-entrypoint.sh"]

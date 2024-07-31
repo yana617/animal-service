@@ -61,7 +61,7 @@ export class Animal implements AnimalModel {
 
   @Column()
   @IsDate()
-  secondBirthday: Date;
+  second_birthday: Date;
 
   @Column({
     type: 'enum',
@@ -70,7 +70,7 @@ export class Animal implements AnimalModel {
   status: Status;
 
   @Column({ nullable: true })
-  advertisingText?: string; // ??
+  advertising_text?: string; // ??
 
   @Column({ nullable: true })
   @IsInt()
@@ -86,8 +86,11 @@ export class Animal implements AnimalModel {
 
   @Column({ nullable: true })
   @IsDate()
-  takenHomeDate?: Date;
+  taken_home_date?: Date;
 
   @Column({ nullable: true })
   curator_id?: string; // user_id
+
+  @Column({ nullable: true })
+  health_details?: string;
 }

@@ -74,6 +74,24 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: height_from
+          in: query
+          description: 'animal height filter (big dogs, for example)'
+          required: false
+          schema:
+            type: integer
+        - name: height_to
+          in: query
+          description: 'animal height filter (small dogs, for example)'
+          required: false
+          schema:
+            type: integer
+        - name: sterilized
+          in: query
+          description: sterilized
+          required: false
+          schema:
+            type: boolean
         - name: order
           in: query
           description: Sort order
@@ -121,7 +139,7 @@ components:
         birthday:
           type: string
           format: date-time
-        secondBirthday:
+        second_birthday:
           type: string
           format: date-time
         place:
@@ -148,6 +166,9 @@ components:
         description:
           type: string
           nullable: true
+        health_details:
+          type: string
+          nullable: true
         status:
           type: string
           enum:
@@ -156,7 +177,7 @@ components:
             - preparation
             - died
             - lost
-        advertisingText:
+        advertising_text:
           type: string
           nullable: true
         height:
@@ -164,7 +185,7 @@ components:
           nullable: true
         sterilized:
           type: boolean
-        takenHomeDate:
+        taken_home_date:
           type: string
           format: date-time
           nullable: true

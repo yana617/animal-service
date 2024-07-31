@@ -18,22 +18,22 @@ describe('GET /animals', () => {
         await animalRepository.create(
             generateAnimal({
                 name: 'Ari',
-            })
+            }),
         );
         await animalRepository.create(
             generateAnimal({
                 name: 'Wanda',
-            })
+            }),
         );
         await animalRepository.create(
             generateAnimal({
                 name: 'Ozzy',
-            })
+            }),
         );
         await animalRepository.create(
             generateAnimal({
                 name: 'Danya',
-            })
+            }),
         );
 
         const response = await request(app)

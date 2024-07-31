@@ -9,7 +9,7 @@ dotenv.config();
 
 export const app = createApp();
 
-async function initDatabase() {
+async function initDatabase(): Promise<void> {
   try {
     await AppDataSource.initialize();
   } catch (error) {

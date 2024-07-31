@@ -10,7 +10,7 @@ type RequestParams = {
     body?: Record<string, any>;
 };
 
-const request = async ({ method, url, token, body }: RequestParams) => {
+const request = async ({ method, url, token, body }: RequestParams): Promise<any> => {
     try {
         const response = await axios({
             method,
@@ -24,18 +24,18 @@ const request = async ({ method, url, token, body }: RequestParams) => {
     }
 };
 
-const get = async ({ url, token }: Pick<RequestParams, 'url' | 'token'>) =>
-    request({ method: 'GET', url, token });
+const get = async ({ url, token }: Pick<RequestParams, 'url' | 'token'>): Promise<any> =>
+    await request({ method: 'GET', url, token });
 
-const post = async ({ url, body, token }: Omit<RequestParams, 'method'>) =>
-    request({
-        method: 'POST',
-        body,
-        url,
-        token,
-    });
+// const post = async ({ url, body, token }: Omit<RequestParams, 'method'>): Promise<any> =>
+//     await request({
+//         method: 'POST',
+//         body,
+//         url,
+//         token,
+//     });
 
-const checkAuth = async (token) => get({ url: '/auth', token });
+const checkAuth = async (token): Promise<void> => await get({ url: '/auth', token });
 
 export const authServiceApi = {
     checkAuth,

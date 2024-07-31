@@ -5,7 +5,12 @@ import { generateAnimal } from '../../fixtures/db';
 import { animalRepository } from '../../../repositories/animal.repository';
 import { AUTH_SERVICE_URL } from '../../../constant/auth-service-url';
 import { app } from '../../fixtures/setup';
-import { AnimalType, Place, Sex, Status } from '../../../database/models/animal';
+import {
+    AnimalType,
+    Place,
+    Sex,
+    Status,
+} from '../../../database/models/animal';
 
 beforeEach(async () => {
     await animalRepository.deleteAll();
@@ -18,7 +23,7 @@ describe('GET /animals', () => {
         await animalRepository.create(generateAnimal());
         await animalRepository.create(generateAnimal());
         await animalRepository.create(
-            generateAnimal({ status: Status.PREPARATION })
+            generateAnimal({ status: Status.PREPARATION }),
         );
 
         const response = await request(app)
@@ -43,13 +48,13 @@ describe('GET /animals', () => {
         nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
 
         await animalRepository.create(
-            generateAnimal({ type: AnimalType.DOG, sex: Sex.MALE })
+            generateAnimal({ type: AnimalType.DOG, sex: Sex.MALE }),
         );
         await animalRepository.create(
-            generateAnimal({ type: AnimalType.DOG, sex: Sex.FEMALE })
+            generateAnimal({ type: AnimalType.DOG, sex: Sex.FEMALE }),
         );
         await animalRepository.create(
-            generateAnimal({ type: AnimalType.CAT, sex: Sex.MALE })
+            generateAnimal({ type: AnimalType.CAT, sex: Sex.MALE }),
         );
 
         const {
@@ -81,16 +86,16 @@ describe('GET /animals', () => {
         nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
 
         await animalRepository.create(
-            generateAnimal({ place: Place.AVIARY, status: Status.PREPARATION })
+            generateAnimal({ place: Place.AVIARY, status: Status.PREPARATION }),
         );
         await animalRepository.create(
-            generateAnimal({ place: Place.MAIN_HOUSE, status: Status.HOMELESS })
+            generateAnimal({ place: Place.MAIN_HOUSE, status: Status.HOMELESS }),
         );
         await animalRepository.create(
             generateAnimal({
                 place: Place.ON_TEMPORARY_HOLD,
                 status: Status.PREPARATION,
-            })
+            }),
         );
 
         const {
@@ -122,13 +127,13 @@ describe('GET /animals', () => {
         nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
 
         await animalRepository.create(
-            generateAnimal({ birthday: new Date('2024-01-01') })
+            generateAnimal({ birthday: new Date('2024-01-01') }),
         );
         await animalRepository.create(
-            generateAnimal({ birthday: new Date('2022-01-01') })
+            generateAnimal({ birthday: new Date('2022-01-01') }),
         );
         await animalRepository.create(
-            generateAnimal({ birthday: new Date('2020-01-01') })
+            generateAnimal({ birthday: new Date('2020-01-01') }),
         );
 
         const responseWithBirthdayFrom = await request(app)
@@ -148,5 +153,40 @@ describe('GET /animals', () => {
         const { data: animals2 } = responseWithBirthdayTo.body;
         expect(animals2).toBeDefined();
         expect(animals2.length).toEqual(3);
+    });
+
+    test('Should return animals with filters correctly (height)', async () => {
+        nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
+
+        await animalRepository.create(
+            generateAnimal({ type: AnimalType.DOG, height: 20 }),
+        );
+        await animalRepository.create(
+            generateAnimal({ type: AnimalType.DOG, height: 40 }),
+        );
+        await animalRepository.create(
+            generateAnimal({ type: AnimalType.DOG, height: 60 }),
+        );
+
+        const response1 = await request(app)
+            .get('/animals')
+            .set('x-access-token', 'valid token')
+            .expect(200);
+        const { data: animals } = response1.body;
+        expect(animals.length).toEqual(3);
+
+        const response2 = await request(app)
+            .get('/animals?type=dog&height_from=50')
+            .set('x-access-token', 'valid token')
+            .expect(200);
+        const { data: animals2 } = response2.body;
+        expect(animals2.length).toEqual(1);
+
+        const response3 = await request(app)
+            .get('/animals?type=dog&height_from=20&height_to=50')
+            .set('x-access-token', 'valid token')
+            .expect(200);
+        const { data: animals3 } = response3.body;
+        expect(animals3.length).toEqual(2);
     });
 });

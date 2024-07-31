@@ -8,7 +8,7 @@ properties:
     birthday:
         type: string
         format: date-time
-    secondBirthday:
+    second_birthday:
         type: string
         format: date-time
     place:
@@ -25,10 +25,13 @@ properties:
     description:
         type: string
         nullable: true
+    health_details:
+        type: string
+        nullable: true
     status:
         type: string
         enum: [homeless, adopted, preparation, died, lost]
-    advertisingText:
+    advertising_text:
         type: string
         nullable: true
     height:
@@ -36,7 +39,7 @@ properties:
         nullable: true
     sterilized:
         type: boolean
-    takenHomeDate:
+    taken_home_date:
         type: string
         format: date-time
         nullable: true

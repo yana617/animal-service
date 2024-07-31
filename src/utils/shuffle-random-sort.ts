@@ -1,8 +1,8 @@
-export const shuffleRandomSort = (array: any[]) => {
+export const shuffleRandomSort = (array: any[]): any[] => {
     let currentIndex = array.length;
 
-    while (currentIndex != 0) {
-        let randomIndex = Math.floor(Math.random() * currentIndex);
+    while (currentIndex !== 0) {
+        const randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
 
         [array[currentIndex], array[randomIndex]] = [

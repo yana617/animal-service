@@ -5,6 +5,7 @@ import { config } from './config';
 
 const env = process.env.NODE_ENV ?? 'development';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const AppDataSource = new DataSource({
   ...config[env],
   type: 'postgres',

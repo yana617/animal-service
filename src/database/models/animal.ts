@@ -35,10 +35,11 @@ export type Animal = {
     sex: Sex;
     curator_id?: string;
     description?: string;
-    secondBirthday: Date;
+    second_birthday: Date;
     status: Status;
-    advertisingText?: string;
+    advertising_text?: string;
     height?: number; // required for dogs only
     sterilized: boolean;
-    takenHomeDate?: Date;
+    taken_home_date?: Date;
+    health_details?: string;
 };

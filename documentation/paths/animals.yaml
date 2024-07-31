@@ -52,6 +52,30 @@ get:
           schema:
               type: string
               format: date-time
+        - name: height_from
+          in: query
+          description: 'animal height filter (big dogs, for example)'
+          required: false
+          schema:
+              type: integer
+        - name: height_to
+          in: query
+          description: 'animal height filter (small dogs, for example)'
+          required: false
+          schema:
+              type: integer
+        - name: sterilized
+          in: query
+          description: sterilized
+          required: false
+          schema:
+              type: boolean
+        - name: room
+          in: query
+          description: room number from 1 to 7
+          required: false
+          schema:
+              type: number
         - name: order
           in: query
           description: Sort order

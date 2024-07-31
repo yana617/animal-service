@@ -3,7 +3,7 @@ import { AppDataSource } from './src/database';
 
 const port = process.env.PORT ?? 1083;
 
-const init = async () => {
+const init = async (): Promise<void> => {
     const app = createApp();
 
     await AppDataSource.initialize();
@@ -13,4 +13,4 @@ const init = async () => {
     });
 };
 
-init();
+void init();

@@ -1,4 +1,4 @@
-import { FindManyOptions, type ObjectLiteral, type Repository } from 'typeorm';
+import { type FindManyOptions, type ObjectLiteral, type Repository } from 'typeorm';
 
 export class BaseRepository<T extends ObjectLiteral> {
     repository: Repository<T>;
@@ -16,7 +16,7 @@ export class BaseRepository<T extends ObjectLiteral> {
     }
 
     async create(data: T): Promise<T> {
-        return this.repository.save(data);
+        return await this.repository.save(data);
     }
 
     async updateById(id: string, data): Promise<void> {
