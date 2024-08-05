@@ -7,6 +7,10 @@ export class BaseRepository<T extends ObjectLiteral> {
         this.repository = repository;
     }
 
+    async getAllWithCount(params: FindManyOptions<T> | undefined): Promise<[T[], number]> {
+        return await this.repository.findAndCount(params);
+    }
+
     async getAll(params: FindManyOptions<T> | undefined): Promise<T[]> {
         return await this.repository.find(params);
     }

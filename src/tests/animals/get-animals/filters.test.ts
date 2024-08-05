@@ -31,17 +31,17 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals } = response.body;
-        expect(animals).toBeDefined();
-        expect(animals.length).toEqual(3);
+        const { data: res } = response.body;
+        expect(res.animals).toBeDefined();
+        expect(res.animals.length).toEqual(3);
 
         const responseForMultiStatus = await request(app)
             .get(`/animals?status=${Status.HOMELESS},${Status.PREPARATION}`)
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals2 } = responseForMultiStatus.body;
-        expect(animals2.length).toEqual(4);
+        const { data: res2 } = responseForMultiStatus.body;
+        expect(res2.animals.length).toEqual(4);
     });
 
     test('Should return animals with filters correctly (type, sex)', async () => {
@@ -58,28 +58,28 @@ describe('GET /animals', () => {
         );
 
         const {
-            body: { data: animals1 },
+            body: { data: res1 },
         } = await request(app)
             .get(`/animals?type=${AnimalType.DOG}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals1.length).toEqual(2);
+        expect(res1.animals.length).toEqual(2);
 
         const {
-            body: { data: animals2 },
+            body: { data: res2 },
         } = await request(app)
             .get(`/animals?type=${AnimalType.DOG}&sex=${Sex.FEMALE}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals2.length).toEqual(1);
+        expect(res2.animals.length).toEqual(1);
 
         const {
-            body: { data: animals3 },
+            body: { data: res3 },
         } = await request(app)
             .get(`/animals?sex=${Sex.MALE}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals3.length).toEqual(2);
+        expect(res3.animals.length).toEqual(2);
     });
 
     test('Should return animals with filters correctly (place, status)', async () => {
@@ -99,28 +99,28 @@ describe('GET /animals', () => {
         );
 
         const {
-            body: { data: animals1 },
+            body: { data: res1 },
         } = await request(app)
             .get(`/animals?place=${Place.AVIARY}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals1.length).toEqual(0);
+        expect(res1.animals.length).toEqual(0);
 
         const {
-            body: { data: animals2 },
+            body: { data: res2 },
         } = await request(app)
             .get(`/animals?place=${Place.AVIARY}&status=${Status.PREPARATION}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals2.length).toEqual(1);
+        expect(res2.animals.length).toEqual(1);
 
         const {
-            body: { data: animals3 },
+            body: { data: res3 },
         } = await request(app)
             .get(`/animals?place=${Place.MAIN_HOUSE}`)
             .set('x-access-token', 'valid token')
             .expect(200);
-        expect(animals3.length).toEqual(1);
+        expect(res3.animals.length).toEqual(1);
     });
 
     test('Should return animals with filters correctly (birthday)', async () => {
@@ -141,18 +141,18 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals } = responseWithBirthdayFrom.body;
-        expect(animals).toBeDefined();
-        expect(animals.length).toEqual(2);
+        const { data: res } = responseWithBirthdayFrom.body;
+        expect(res.animals).toBeDefined();
+        expect(res.animals.length).toEqual(2);
 
         const responseWithBirthdayTo = await request(app)
             .get('/animals?birthday_to=2024-06-01')
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals2 } = responseWithBirthdayTo.body;
-        expect(animals2).toBeDefined();
-        expect(animals2.length).toEqual(3);
+        const { data: res2 } = responseWithBirthdayTo.body;
+        expect(res2.animals).toBeDefined();
+        expect(res2.animals.length).toEqual(3);
     });
 
     test('Should return animals with filters correctly (height)', async () => {
@@ -172,21 +172,21 @@ describe('GET /animals', () => {
             .get('/animals')
             .set('x-access-token', 'valid token')
             .expect(200);
-        const { data: animals } = response1.body;
-        expect(animals.length).toEqual(3);
+        const { data: res1 } = response1.body;
+        expect(res1.animals.length).toEqual(3);
 
         const response2 = await request(app)
             .get('/animals?type=dog&height_from=50')
             .set('x-access-token', 'valid token')
             .expect(200);
-        const { data: animals2 } = response2.body;
-        expect(animals2.length).toEqual(1);
+        const { data: res2 } = response2.body;
+        expect(res2.animals.length).toEqual(1);
 
         const response3 = await request(app)
             .get('/animals?type=dog&height_from=20&height_to=50')
             .set('x-access-token', 'valid token')
             .expect(200);
-        const { data: animals3 } = response3.body;
-        expect(animals3.length).toEqual(2);
+        const { data: res3 } = response3.body;
+        expect(res3.animals.length).toEqual(2);
     });
 });

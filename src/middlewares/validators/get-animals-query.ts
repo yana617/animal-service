@@ -16,4 +16,6 @@ export const getAnimalsQueryValidator = [
     query('height_to').optional().isInt(),
     query('sterilized').optional().isBoolean(),
     query('room').optional().isFloat({ min: 1, max: 7 }),
+    query('limit').optional().isInt(),
+    query('skip').optional().isInt(),
 ];

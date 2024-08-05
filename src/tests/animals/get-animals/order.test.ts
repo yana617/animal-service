@@ -37,9 +37,9 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals } = byNameAscOrderResponse.body;
-        expect(animals.length).toEqual(3);
-        expect(animals.map((animal) => animal.name)).toEqual([
+        const { data: res } = byNameAscOrderResponse.body;
+        expect(res.animals.length).toEqual(3);
+        expect(res.animals.map((animal) => animal.name)).toEqual([
             animal1.name,
             animal3.name,
             animal2.name,
@@ -50,8 +50,8 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals2 } = byNameDescOrderResponse.body;
-        expect(animals2.map((animal) => animal.name)).toEqual([
+        const { data: res2 } = byNameDescOrderResponse.body;
+        expect(res2.animals.map((animal) => animal.name)).toEqual([
             animal2.name,
             animal3.name,
             animal1.name,
@@ -62,8 +62,8 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals3 } = byBirthdayAscOrderResponse.body;
-        expect(animals3.map((animal) => animal.name)).toEqual([
+        const { data: res3 } = byBirthdayAscOrderResponse.body;
+        expect(res3.animals.map((animal) => animal.name)).toEqual([
             animal1.name,
             animal2.name,
             animal3.name,
@@ -74,8 +74,8 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals4 } = byBirthdayDescOrderResponse.body;
-        expect(animals4.map((animal) => animal.name)).toEqual([
+        const { data: res4 } = byBirthdayDescOrderResponse.body;
+        expect(res4.animals.map((animal) => animal.name)).toEqual([
             animal3.name,
             animal2.name,
             animal1.name,

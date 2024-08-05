@@ -92,6 +92,12 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: room
+          in: query
+          description: room number from 1 to 7
+          required: false
+          schema:
+            type: number
         - name: order
           in: query
           description: Sort order
@@ -107,6 +113,18 @@ paths:
           required: false
           schema:
             type: string
+        - name: limit
+          in: query
+          description: limit animals to get (skip required!)
+          required: false
+          schema:
+            type: number
+        - name: skip
+          in: query
+          description: skip animals to get (limit required!)
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: Returns existing animals

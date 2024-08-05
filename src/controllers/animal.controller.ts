@@ -19,18 +19,22 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
         place,
         birthday_from,
         birthday_to,
-        order,
-        sortBy,
         search,
         height_from,
         height_to,
         sterilized,
         room,
+        order,
+        sortBy,
+        limit,
+        skip = 0,
     } = req.query as GetAnimalsQuery;
 
-    const statusQuery = (status?.includes(',') ? In(status.split(',')) : status) || Status.HOMELESS;
+    const statusQuery =
+        (status?.includes(',') ? In(status.split(',')) : status) ||
+        Status.HOMELESS;
 
-    const animals = await animalRepository.getAll({
+    const [animals, total] = await animalRepository.getAllWithCount({
         where: {
             type,
             sex,
@@ -51,6 +55,9 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
                   },
               }
             : {}),
+        ...(typeof skip === 'string' && typeof limit === 'string'
+            ? { take: parseInt(limit), skip: parseInt(skip) }
+            : {}),
     });
 
     const mappedAnimals = animals.map((animal) => ({
@@ -60,7 +67,10 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
 
     res.json({
         success: true,
-        data: sortBy ? mappedAnimals : shuffleRandomSort(mappedAnimals),
+        data: {
+            animals: sortBy ? mappedAnimals : shuffleRandomSort(mappedAnimals),
+            total,
+        },
     });
 };
 

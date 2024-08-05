@@ -20,4 +20,6 @@ export type GetAnimalsQuery = {
     height_to?: number;
     sterilized?: boolean;
     room?: number;
+    limit?: string;
+    skip?: string;
 };

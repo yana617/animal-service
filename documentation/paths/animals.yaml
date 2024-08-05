@@ -91,6 +91,18 @@ get:
           required: false
           schema:
               type: string
+        - name: limit
+          in: query
+          description: limit animals to get (skip required!)
+          required: false
+          schema:
+              type: number
+        - name: skip
+          in: query
+          description: skip animals to get (limit required!)
+          required: false
+          schema:
+              type: number
     responses:
         '200':
             description: Returns existing animals

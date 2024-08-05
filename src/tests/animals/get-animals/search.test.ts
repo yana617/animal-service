@@ -41,9 +41,9 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals } = response.body;
-        expect(animals?.length).toEqual(1);
-        expect(animals?.[0].name).toBe('Ari');
+        const { data: res } = response.body;
+        expect(res.animals?.length).toEqual(1);
+        expect(res.animals?.[0].name).toBe('Ari');
 
         // -----
 
@@ -52,7 +52,7 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token')
             .expect(200);
 
-        const { data: animals2 } = response2.body;
-        expect(animals2?.length).toEqual(2);
+        const { data: res2 } = response2.body;
+        expect(res2.animals.length).toEqual(2);
     });
 });
