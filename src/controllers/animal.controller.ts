@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { type Request, type Response } from 'express';
 import { Between, ILike, In } from 'typeorm';
 
@@ -9,9 +10,12 @@ import { shuffleRandomSort } from '../utils/shuffle-random-sort';
 import { ERRORS } from '../translates';
 
 const RANDOM_IMAGE =
-    'https://sun9-33.userapi.com/impg/sFaWNeHsokebqhegXFfLipAz3magquywvlU6pw/G6OOJxOufu8.jpg?size=810x1080&quality=95&sign=8271b8e8210ff74dbb9fe827e7f11700&type=album';
+    'https://sun9-36.userapi.com/impg/E4Il7RvJNFk9uHeH3Td4thfz_hD9QxK88o7w9Q/AugBQ_jTpRg.jpg?size=1600x1068&quality=95&sign=f650a5a6635b025ef45aee9caf623807&type=album';
 
-const getAll = async (req: Request, res: Response): Promise<void> => {
+const getAll = async (
+    req: Request<{}, {}, {}, GetAnimalsQuery>,
+    res: Response,
+): Promise<void> => {
     const {
         type,
         sex,
@@ -28,7 +32,7 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
         sortBy,
         limit,
         skip = 0,
-    } = req.query as GetAnimalsQuery;
+    } = req.query;
 
     const statusQuery =
         (status?.includes(',') ? In(status.split(',')) : status) ||

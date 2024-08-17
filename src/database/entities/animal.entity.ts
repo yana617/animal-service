@@ -70,7 +70,7 @@ export class Animal implements AnimalModel {
   status: Status;
 
   @Column({ nullable: true })
-  advertising_text?: string; // ??
+  advertising_text?: string;
 
   @Column({ nullable: true })
   @IsInt()

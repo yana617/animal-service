@@ -2,10 +2,9 @@
 import express from 'express';
 import { param } from 'express-validator';
 
-import { asyncErrorHandler } from '../middlewares';
+import { asyncErrorHandler, checkValidationErrors } from '../middlewares';
 import { animalController } from '../controllers/animal.controller';
 import { getAnimalsQueryValidator } from '../middlewares/validators/get-animals-query';
-import { checkValidationErrors } from '../middlewares/check-validation-errors';
 
 const router = express.Router();
 
