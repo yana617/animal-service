@@ -6,16 +6,17 @@ import { animalRepository } from '../../../repositories/animal.repository';
 import { AUTH_SERVICE_URL } from '../../../constant/auth-service-url';
 import { app } from '../../fixtures/setup';
 
-beforeEach(async () => {
-    console.log('1) HIIIIIII');
-    await animalRepository.deleteAll();
-    nock.cleanAll();
-});
-
 describe('GET /animals', () => {
+    beforeEach(async () => {
+        console.log('1) HI');
+        await animalRepository.deleteAll();
+        nock.cleanAll();
+        console.log('2) HI');
+    });
+
     test('Should return sorted animals', async () => {
         nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
-        await animalRepository.deleteAll();
+        console.log('3) HI');
 
         const animal1 = generateAnimal({
             birthday: new Date('2020-01-01'),
