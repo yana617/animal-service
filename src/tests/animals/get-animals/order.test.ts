@@ -7,6 +7,7 @@ import { AUTH_SERVICE_URL } from '../../../constant/auth-service-url';
 import { app } from '../../fixtures/setup';
 
 beforeEach(async () => {
+    console.log("1) HIIIIIII");
     await animalRepository.deleteAll();
     nock.cleanAll();
 });
