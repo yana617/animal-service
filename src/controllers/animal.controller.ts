@@ -38,6 +38,9 @@ const getAll = async (
         (status?.includes(',') ? In(status.split(',')) : status) ||
         Status.HOMELESS;
 
+        const a = await animalRepository.getAll({});
+        console.log('count', a.length);
+
     const [animals, total] = await animalRepository.getAllWithCount({
         where: {
             type,
