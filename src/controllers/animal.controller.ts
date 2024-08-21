@@ -67,6 +67,8 @@ const getAll = async (
             : {}),
     });
 
+    console.log('request res', animals.length, sortBy, order);
+
     const mappedAnimals = animals.map((animal) => ({
         ...animal,
         photos: [RANDOM_IMAGE],
