@@ -35,6 +35,6 @@ export class BaseRepository<T extends ObjectLiteral> {
     }
 
     async deleteAll(): Promise<void> {
-        await this.repository.clear();
+        await this.repository.delete({});
     }
 }
