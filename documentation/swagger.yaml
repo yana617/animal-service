@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title: Animal Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:1083/
+    description: Development
+  - url: https://animal-service.dogcatbmpz.by/
+    description: Production
+tags:
+  - name: Animals
+    description: CRUD for animals
+paths:
+  /animals:
+    $ref: "./paths/animals.yaml"
+components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
+  schemas:
+    $ref: "./schemas/index.yaml"

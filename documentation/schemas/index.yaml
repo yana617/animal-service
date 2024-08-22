@@ -1,0 +1,6 @@
+Animal:
+  $ref: "./Animal.yaml"
+ValidationError:
+  $ref: "./ValidationError.yaml"
+Error:
+  $ref: "./Error.yaml"

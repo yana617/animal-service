@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  app:
+    container_name: animal-service-dev
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    volumes:
+      - ./:/usr/src/animal-service
+      - /usr/src/animal-service/node_modules
+    ports:
+      - "1083:1083"
+    depends_on: 
+      - postgres-db-animal-service
+    env_file:
+     - .env
+    
+  postgres-db-animal-service:
+    image: postgres:14.5
+    volumes:
+      - animal-service-volume-data:/data
+    ports:
+      - "5433:5432"
+    env_file:
+     - .env
+
+  postgres-db-animal-service-test:
+    image: postgres:12.3-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: "test-db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+
+volumes:
+  animal-service-volume-data:
