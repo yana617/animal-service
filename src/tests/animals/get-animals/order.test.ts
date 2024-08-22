@@ -8,10 +8,8 @@ import { app } from '../../fixtures/setup';
 
 describe('GET /animals', () => {
     beforeEach(async () => {
-        console.log('1) HI');
         await animalRepository.deleteAll();
         nock.cleanAll();
-        console.log('2) HI');
     });
 
     test('Should return sorted animals', async () => {

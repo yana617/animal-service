@@ -6,12 +6,12 @@ import { app } from '../fixtures/setup';
 import { generateAnimal } from '../fixtures/db';
 import { ERRORS } from '../../translates';
 
-beforeEach(async () => {
-    await animalRepository.deleteAll();
-    nock.cleanAll();
-});
-
 describe('GET /animals/:id request', () => {
+    beforeEach(async () => {
+        await animalRepository.deleteAll();
+        nock.cleanAll();
+    });
+
     test('Should return correct animal', async () => {
         const animalOne = generateAnimal();
         await animalRepository.create(animalOne);
