@@ -14,13 +14,20 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:latest
         env:
           POSTGRES_USERNAME: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test-db
         ports:
           - 5432:5432
+
+
+    env: 
+      NODE_ENV: test
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
 
     # strategy:
     #   matrix:
@@ -37,17 +44,17 @@ jobs:
       - name: Connect to PostgreSQL and run migrations
         run: |
           npx typeorm-ts-node-commonjs migration:run -d src/database/index.ts
-        env:
-          NODE_ENV: test
-          POSTGRES_USERNAME: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_PORT: 5432
+        # env:
+        #   NODE_ENV: test
+        #   POSTGRES_USERNAME: postgres
+        #   POSTGRES_PASSWORD: postgres
+        #   POSTGRES_PORT: 5432
       - name: Run linter and tests
         run: |
           npm run lint
           npm run test
-        env:
-          NODE_ENV: test
-          POSTGRES_USERNAME: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_PORT: 5432
+        # env:
+        #   NODE_ENV: test
+        #   POSTGRES_USERNAME: postgres
+        #   POSTGRES_PASSWORD: postgres
+        #   POSTGRES_PORT: 5432

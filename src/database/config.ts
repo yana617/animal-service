@@ -45,7 +45,7 @@ export const config: Record<Environment, Config> = {
     test: {
         ...common,
         database: 'test-db',
-        host: 'localhost',
+        host: 'postgres',
     },
     production: {
         ...common,
