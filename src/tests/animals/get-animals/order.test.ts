@@ -38,7 +38,7 @@ describe('GET /animals', () => {
             .set('x-access-token', 'valid token');
         // .expect(200);
 
-        console.log(byNameAscOrderResponse);
+        console.log(JSON.stringify(byNameAscOrderResponse.body));
 
         const { data: res } = byNameAscOrderResponse.body;
         expect(res.animals.length).toEqual(3);
