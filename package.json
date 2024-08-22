@@ -4,7 +4,7 @@
    "description": "Animal CRUD",
    "main": "index.js",
    "scripts": {
-      "test": "jest",
+      "test": "jest --runInBand",
       "test:docker": "chmod +x ./bin/test.sh && NODE_ENV=test ./bin/test.sh",
       "dev": "NODE_ENV=development nodemon index.ts",
       "dev:docker": "docker compose up",
