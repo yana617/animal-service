@@ -34,7 +34,7 @@ describe('GET /animals', () => {
         await animalRepository.create(animal3);
 
         const byNameAscOrderResponse = await request(app)
-            .get('/animals?order=ASC&sortBy=name')
+            .get('/animals?order=asc&sortBy=name')
             .set('x-access-token', 'valid token');
         // .expect(200);
 
