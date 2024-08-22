@@ -14,7 +14,6 @@ describe('GET /animals', () => {
 
     test('Should return sorted animals', async () => {
         nock(AUTH_SERVICE_URL).get('/auth').reply(200, { success: true });
-        console.log('3) HI');
 
         const animal1 = generateAnimal({
             birthday: new Date('2020-01-01'),
