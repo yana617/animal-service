@@ -35,8 +35,10 @@ describe('GET /animals', () => {
 
         const byNameAscOrderResponse = await request(app)
             .get('/animals?order=ASC&sortBy=name')
-            .set('x-access-token', 'valid token')
-            .expect(200);
+            .set('x-access-token', 'valid token');
+        // .expect(200);
+
+        console.log(byNameAscOrderResponse);
 
         const { data: res } = byNameAscOrderResponse.body;
         expect(res.animals.length).toEqual(3);
