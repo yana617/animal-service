@@ -10,6 +10,7 @@ on:
 jobs:
   build_test:
     runs-on: ubuntu-latest
+    container: node:latest
 
     services:
       postgres:
@@ -21,18 +22,18 @@ jobs:
         ports:
           - 5435:5432
 
-    strategy:
-      matrix:
-        node-version: [18.x]
+    # strategy:
+    #   matrix:
+    #     node-version: [18.x]
     steps:
-      - uses: actions/checkout@v2
-      - name: setup node
-        uses: actions/setup-node@master
-        with:
-          node-version: ${{ matrix.node-version }}
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      # - name: setup node
+      #   uses: actions/setup-node@master
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: |
-          npm ci 
+        run: npm ci
       - name: Connect to PostgreSQL and run migrations
         run: |
           npx typeorm-ts-node-commonjs migration:run -d src/database/index.ts
