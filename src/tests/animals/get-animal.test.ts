@@ -1,5 +1,4 @@
 import request from 'supertest';
-import nock from 'nock';
 
 import { animalRepository } from '../../repositories/animal.repository';
 import { app } from '../fixtures/setup';
@@ -7,9 +6,8 @@ import { generateAnimal } from '../fixtures/db';
 import { ERRORS } from '../../translates';
 
 describe('GET /animals/:id request', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
-        nock.cleanAll();
     });
 
     test('Should return correct animal', async () => {

@@ -7,7 +7,7 @@ import { AUTH_SERVICE_URL } from '../../../constant/auth-service-url';
 import { app } from '../../fixtures/setup';
 
 describe('GET /animals', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
         nock.cleanAll();
     });
@@ -33,7 +33,7 @@ describe('GET /animals', () => {
         await animalRepository.create(animal3);
 
         const byNameAscOrderResponse = await request(app)
-            .get('/animals?order=asc&sortBy=name')
+            .get('/animals?order=ASC&sortBy=name')
             .set('x-access-token', 'valid token')
             .expect(200);
 
@@ -46,7 +46,7 @@ describe('GET /animals', () => {
         ]);
 
         const byNameDescOrderResponse = await request(app)
-            .get('/animals?order=desc&sortBy=name')
+            .get('/animals?order=DESC&sortBy=name')
             .set('x-access-token', 'valid token')
             .expect(200);
 
@@ -70,7 +70,7 @@ describe('GET /animals', () => {
         ]);
 
         const byBirthdayDescOrderResponse = await request(app)
-            .get('/animals?order=desc&sortBy=birthday')
+            .get('/animals?order=DESC&sortBy=birthday')
             .set('x-access-token', 'valid token')
             .expect(200);
 

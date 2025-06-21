@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import type { Express, Request, Response } from 'express';
 
 import router from './src/routes';
+import { setToken } from './src/middlewares';
 
 dotenv.config();
 
@@ -41,7 +42,7 @@ export const createApp = (): Express => {
                 callback(new Error('Not allowed by CORS'));
             }
         },
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         credentials: true,
         optionsSuccessStatus: 200,
     };
@@ -56,6 +57,7 @@ export const createApp = (): Express => {
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use(express.json({ limit: '10mb' }));
 
+    app.use(setToken);
     app.use(router);
 
     app.use((err, req: Request, res, next) => {

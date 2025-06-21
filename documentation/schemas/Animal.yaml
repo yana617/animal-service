@@ -47,8 +47,3 @@ properties:
         type: string
         format: uuid
         nullable: true
-    photos:
-        type: array
-        items:
-            type: string
-

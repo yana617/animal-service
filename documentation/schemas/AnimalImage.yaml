@@ -1,0 +1,12 @@
+type: object
+properties:
+    id:
+        type: string
+        format: uuid
+    display_order:
+        type: integer
+    animal_id:
+        type: string
+        format: uuid
+    image_key:
+        type: string

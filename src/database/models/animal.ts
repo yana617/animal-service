@@ -1,3 +1,5 @@
+import type { AnimalImage } from './animal-image';
+
 export enum Place {
     MAIN_HOUSE = 'main-house',
     CAT_HOUSE = 'cat-house',
@@ -23,6 +25,7 @@ export enum Status {
     PREPARATION = 'preparation',
     DIED = 'died',
     LOST = 'lost',
+    ON_PROBATION = 'on-probation',
 }
 
 export type Animal = {
@@ -42,4 +45,6 @@ export type Animal = {
     sterilized: boolean;
     taken_home_date?: Date;
     health_details?: string;
+    photos: AnimalImage[];
+    photo?: AnimalImage;
 };
