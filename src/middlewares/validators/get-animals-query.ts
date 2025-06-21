@@ -9,7 +9,7 @@ export const getAnimalsQueryValidator = [
     query('place').optional().isIn(Object.values(Place)),
     query('birthday_from').optional().isISO8601(),
     query('birthday_to').optional().isISO8601(),
-    query('order').optional().isIn(['asc', 'desc']),
+    query('order').optional().isIn(['ASC', 'DESC']),
     query('sortBy').optional().isIn(['name', 'height', 'birthday', 'curator_id', 'second_birthday']),
     query('search').optional().isString(),
     query('height_from').optional().isInt(),

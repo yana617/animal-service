@@ -13,6 +13,16 @@ tags:
 paths:
   /animals:
     $ref: "./paths/animals.yaml"
+  /animals/short:
+    $ref: "./paths/animals-short.yaml"
+  /animals/{animalId}:
+    $ref: "./paths/animal.yaml"
+  /animals/{animalId}/images:
+    $ref: "./paths/images.yaml"
+  /animals/{animalId}/images/${imageId}/order:
+    $ref: "./paths/image-order.yaml"
+  /animals/{animalId}/images/${imageId}:
+    $ref: "./paths/image.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

@@ -1,3 +1,4 @@
+import { type Request } from 'express';
 import {
     type Animal,
     type AnimalType,
@@ -13,7 +14,7 @@ export type GetAnimalsQuery = {
     place?: Place;
     birthday_from?: string;
     birthday_to?: string;
-    order?: 'asc' | 'desc';
+    order?: 'ASC' | 'DESC';
     sortBy?: keyof Animal;
     search?: string;
     height_from?: number;
@@ -23,3 +24,21 @@ export type GetAnimalsQuery = {
     limit?: string;
     skip?: string;
 };
+
+export type ResponseType<T> = {
+    success: boolean;
+    data: T;
+};
+
+export type UpdateOrderRequestBody = {
+    display_order: number;
+};
+
+export type DeleteImageRequestParams = {
+    id: string;
+    imageId: string;
+};
+
+export type FileType = Express.Multer.File & { key: string };
+
+export type RequestWithAnimal<T, T2> = Request<T, T2> & { animal: Animal };

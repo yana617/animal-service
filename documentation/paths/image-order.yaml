@@ -1,0 +1,61 @@
+patch:
+    summary: Update image's order
+    tags:
+        - "AnimalImage"
+    security:
+        - AccessTokenAuth: []
+    parameters:
+      - name: "animalId"
+        in: "path"
+        required: true
+        schema:
+            type: string
+      - name: "imageId"
+        in: "path"
+        required: true
+        schema:
+            type: string
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        display_order:
+                            type: number
+                    required:
+                        - display_order
+    responses:
+        "200":
+            description: Success
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                    example:
+                        success: true
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Fails with not enough permissions / animal is not relates to the image
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Animal not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Animal not found"

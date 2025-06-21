@@ -8,23 +8,29 @@ import {
     Sex,
     Status,
 } from '../../database/models/animal';
+import type { AnimalImage } from '../../database/models/animal-image';
 
 export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     id: options.id || v4(),
     name: options.name || faker.lorem.words(1),
     description: faker.lorem.words(15),
-    type:
-        options.type ||
-        faker.random.arrayElement([AnimalType.DOG, AnimalType.CAT]),
+    type: options.type || AnimalType.DOG,
     place: options.place || Place.MAIN_HOUSE,
     birthday: options.birthday || faker.date.past(),
     second_birthday: faker.date.past(),
     sex: options.sex || faker.random.arrayElement([Sex.MALE, Sex.FEMALE]),
     status: options.status || Status.HOMELESS,
-    sterilized: options.sterilized || faker.datatype.boolean,
-    height:
-        options.height ||
-        (options.type === AnimalType.DOG
-            ? faker.datatype.number({ min: 20, max: 80 })
-            : null),
+    sterilized: options.sterilized || faker.datatype.boolean(),
+    photos: options.photos || [],
+    height: options.height || faker.datatype.number({ min: 20, max: 80 }),
+});
+
+export const generateAnimalImage = (
+    animal: Animal,
+    options: Partial<AnimalImage> = {},
+): AnimalImage => ({
+    id: options.id || v4(),
+    animal,
+    image_key: `${animal.id}/${v4()}.png`,
+    display_order: options.display_order || 1,
 });

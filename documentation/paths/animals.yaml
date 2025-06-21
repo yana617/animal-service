@@ -117,3 +117,92 @@ get:
                                 type: array
                                 items:
                                     $ref: '../schemas/Animal.yaml'
+        "400":
+            description: Query validation errors
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+post:
+    summary: Create new animal
+    tags:
+        - "Animals"
+    security:
+        - AccessTokenAuth: [] 
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        name:
+                            type: string
+                        type:
+                            type: string
+                            enum: [dog, cat, other]
+                        place:
+                            type: string
+                            enum:
+                                [
+                                    main-house,
+                                    cat-house,
+                                    quarantine-house,
+                                    aviary,
+                                    on-temporary-hold,
+                                ]
+                        sex:
+                            type: string
+                            enum: [male, female]
+                        status:
+                            type: string
+                            enum: [homeless, adopted, preparation, died, lost]
+                        birthday:
+                            type: string
+                            format: date-time
+                        height:
+                            type: integer
+                        sterilized:
+                            type: boolean
+                        room:
+                            type: number
+                        advertising_text:
+                            type: string
+                    required:
+                        - name
+                        - type
+                        - place
+                        - sex
+                        - status
+                        - birthday
+                        - sterilized
+    responses:
+        "200":
+            description: Returns new animal
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                            data:
+                                $ref: "../schemas/Animal.yaml"
+        "400":
+            description: Fails with validation errors
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Fails with not enough permissions
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"

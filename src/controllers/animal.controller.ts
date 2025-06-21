@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { type Request, type Response } from 'express';
-import { Between, ILike, In } from 'typeorm';
 
 import { animalRepository } from '../repositories/animal.repository';
-import { AnimalType, Status } from '../database/models/animal';
-import { generateDateBetweenQuery } from '../utils/generate-date-between-query';
-import { type GetAnimalsQuery } from './types';
+import { type Animal, AnimalType, Status } from '../database/models/animal';
+import { type RequestWithAnimal, type GetAnimalsQuery } from './types';
 import { shuffleRandomSort } from '../utils/shuffle-random-sort';
 import { ERRORS } from '../translates';
-
-const RANDOM_IMAGE =
-    'https://sun9-36.userapi.com/impg/E4Il7RvJNFk9uHeH3Td4thfz_hD9QxK88o7w9Q/AugBQ_jTpRg.jpg?size=1600x1068&quality=95&sign=f650a5a6635b025ef45aee9caf623807&type=album';
+import { animalImageRepository } from '../repositories/animal-image.repository';
 
 const getAll = async (
     req: Request<{}, {}, {}, GetAnimalsQuery>,
@@ -34,40 +30,86 @@ const getAll = async (
         skip = 0,
     } = req.query;
 
-    const statusQuery =
-        (status?.includes(',') ? In(status.split(',')) : status) ||
-        Status.HOMELESS;
+    const query = animalRepository
+        .createQueryBuilder('animal')
+        .leftJoinAndMapOne(
+            'animal.photo',
+            'animal.photos',
+            'photo',
+            'photo.display_order = :displayOrder',
+            {
+                displayOrder: 1,
+            },
+        );
 
-    const [animals, total] = await animalRepository.getAllWithCount({
-        where: {
-            type,
-            sex,
-            status: statusQuery,
-            place,
-            sterilized,
-            room,
-            birthday: generateDateBetweenQuery(birthday_from, birthday_to),
-            ...(type === AnimalType.DOG
-                ? { height: Between(height_from || 0, height_to || 100) }
-                : {}),
-            ...(search ? { name: ILike(`%${search}%`) } : {}),
-        },
-        ...(sortBy
-            ? {
-                  order: {
-                      [sortBy]: order || 'asc',
-                  },
-              }
-            : {}),
-        ...(typeof skip === 'string' && typeof limit === 'string'
-            ? { take: parseInt(limit), skip: parseInt(skip) }
-            : {}),
-    });
+    // Add filtering conditions
 
-    const mappedAnimals = animals.map((animal) => ({
+    if (status?.includes(',')) {
+        const statuses = status.split(',') as Status[];
+        query.andWhere('animal.status IN (:...statuses)', { statuses });
+    } else {
+        query.andWhere('animal.status = :status', {
+            status: status || Status.HOMELESS,
+        });
+    }
+
+    if (type) {
+        query.andWhere('animal.type = :type', { type });
+    }
+
+    if (sex) {
+        query.andWhere('animal.sex = :sex', { sex });
+    }
+
+    if (place) {
+        query.andWhere('animal.place = :place', { place });
+    }
+
+    if (typeof sterilized === 'boolean') {
+        query.andWhere('animal.sterilized = :sterilized', { sterilized });
+    }
+
+    if (room) {
+        query.andWhere('animal.room = :room', { room });
+    }
+
+    if (birthday_from || birthday_to) {
+        query.andWhere(
+            'animal.birthday BETWEEN :birthdayFrom AND :birthdayTo',
+            {
+                birthdayFrom: birthday_from || '1900-01-01',
+                birthdayTo: birthday_to || '2100-12-31',
+            },
+        );
+    }
+
+    if (type === AnimalType.DOG) {
+        query.andWhere('animal.height BETWEEN :heightFrom AND :heightTo', {
+            heightFrom: height_from || 0,
+            heightTo: height_to || 100,
+        });
+    }
+
+    if (search) {
+        query.andWhere('animal.name ILIKE :search', { search: `%${search}%` });
+    }
+
+    if (sortBy) {
+        query.orderBy(`animal.${sortBy}`, order || 'ASC');
+    }
+
+    if (typeof skip === 'string' && typeof limit === 'string') {
+        query.skip(parseInt(skip)).take(parseInt(limit));
+    }
+
+    const [animals, total] = await query.getManyAndCount();
+
+    const mappedAnimals = (animals as Animal[]).map((animal) => ({
         ...animal,
-        photos: [RANDOM_IMAGE],
-    })); // TODO: fix after S3 integrated
+        photo: animal.photo
+            ? `${process.env.AWS_BUCKET_URL}/${animal.photo.image_key}`
+            : null,
+    }));
 
     res.json({
         success: true,
@@ -78,26 +120,141 @@ const getAll = async (
     });
 };
 
-const getAnimal = async (req: Request, res: Response): Promise<any> => {
-    const { id } = req.params;
-
-    const animal = await animalRepository.getById(id);
-
-    if (!animal) {
-        return res
-            .status(404)
-            .json({ success: false, error: ERRORS.ANIMAL_NOT_FOUND });
-    }
+const getAllShort = async (_, res: Response): Promise<void> => {
+    const [animals, total] = await animalRepository
+        .createQueryBuilder('animal')
+        .leftJoinAndMapOne(
+            'animal.photo',
+            'animal.photos',
+            'photo',
+            'photo.display_order = :displayOrder',
+            { displayOrder: 1 },
+        )
+        .select(['animal.id', 'animal.name', 'photo'])
+        .where('animal.status = :status', { status: Status.HOMELESS })
+        .orderBy('animal.name', 'ASC')
+        .getManyAndCount();
 
     res.json({
         success: true,
-        data: { ...animal, photos: [RANDOM_IMAGE] }, // TODO: fix after S3 integrated
+        data: {
+            animals: (animals as Animal[]).map((animal) => ({
+                ...animal,
+                photo: animal.photo
+                    ? `${process.env.AWS_BUCKET_URL}/${animal.photo.image_key}`
+                    : null,
+            })),
+            total,
+        },
     });
 };
 
-// TO-DO: finish
-const createAnimal = async (req: Request, res: Response): Promise<void> => {
-    await animalRepository.create(req.body);
+const getAnimal = async (req: Request, res: Response): Promise<any> => {
+    const { id } = req.params;
+
+    const animalWithPhotos = await animalRepository
+        .createQueryBuilder('animal')
+        .leftJoinAndSelect('animal.photos', 'photo')
+        .where('animal.id = :id', { id })
+        .orderBy('photo.display_order', 'ASC')
+        .getOne();
+
+    res.json({
+        success: true,
+        data: {
+            ...animalWithPhotos,
+            photos: animalWithPhotos?.photos.map((photo) => ({
+                id: photo.id,
+                url: `${process.env.AWS_BUCKET_URL}/${photo.image_key}`,
+            })),
+        },
+    });
+};
+
+const createAnimal = async (
+    req: Request<{}, {}, Animal>,
+    res: Response,
+): Promise<any> => {
+    const {
+        name,
+        type,
+        place,
+        room,
+        birthday,
+        sex,
+        curator_id,
+        description,
+        second_birthday,
+        status,
+        advertising_text,
+        height,
+        sterilized,
+        taken_home_date,
+        health_details,
+    } = req.body;
+
+    if (type === AnimalType.DOG && !height) {
+        return res
+            .status(400)
+            .json({ success: false, error: ERRORS.DOG_HEIGHT_REQUIRED });
+    }
+
+    const animal = await animalRepository.create({
+        name,
+        type,
+        place,
+        room,
+        birthday,
+        sex,
+        curator_id,
+        description,
+        second_birthday,
+        status,
+        advertising_text,
+        height: type === AnimalType.DOG ? height : undefined,
+        sterilized,
+        taken_home_date,
+        health_details,
+        photos: [],
+    });
+
+    res.json({
+        success: true,
+        data: animal,
+    });
+};
+
+const updateAnimal = async (
+    req: Request<{ id: string }, Omit<Animal, 'id'>>,
+    res: Response,
+): Promise<any> => {
+    const { id } = req.params;
+    const { type, height } = req.body;
+
+    if (type === AnimalType.DOG && !height) {
+        return res
+            .status(400)
+            .json({ success: false, error: ERRORS.DOG_HEIGHT_REQUIRED });
+    }
+    if (type !== AnimalType.DOG) {
+        delete req.body.height;
+    }
+
+    await animalRepository.updateById(id, req.body);
+
+    res.json({
+        success: true,
+    });
+};
+
+const deleteAnimal = async (
+    req: RequestWithAnimal<{ id: string }, {}>,
+    res: Response,
+): Promise<any> => {
+    const { id } = req.params;
+
+    await animalImageRepository.deleteByAnimal(req.animal);
+    await animalRepository.deleteById(id);
 
     res.json({
         success: true,
@@ -108,4 +265,7 @@ export const animalController = {
     getAll,
     getAnimal,
     createAnimal,
+    updateAnimal,
+    getAllShort,
+    deleteAnimal,
 };

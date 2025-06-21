@@ -37,6 +37,9 @@ const get = async ({ url, token }: Pick<RequestParams, 'url' | 'token'>): Promis
 
 const checkAuth = async (token): Promise<void> => await get({ url: '/auth', token });
 
+const getPermissions = async (token): Promise<string[]> => await get({ url: '/permissions/me', token });
+
 export const authServiceApi = {
     checkAuth,
+    getPermissions,
 };

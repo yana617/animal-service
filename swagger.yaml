@@ -139,6 +139,341 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Animal'
+        '400':
+          description: Query validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+    post:
+      summary: Create new animal
+      tags:
+        - Animals
+      security:
+        - AccessTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                    - dog
+                    - cat
+                    - other
+                place:
+                  type: string
+                  enum:
+                    - main-house
+                    - cat-house
+                    - quarantine-house
+                    - aviary
+                    - on-temporary-hold
+                sex:
+                  type: string
+                  enum:
+                    - male
+                    - female
+                status:
+                  type: string
+                  enum:
+                    - homeless
+                    - adopted
+                    - preparation
+                    - died
+                    - lost
+                birthday:
+                  type: string
+                  format: date-time
+                height:
+                  type: integer
+                sterilized:
+                  type: boolean
+                room:
+                  type: number
+                advertising_text:
+                  type: string
+              required:
+                - name
+                - type
+                - place
+                - sex
+                - status
+                - birthday
+                - sterilized
+      responses:
+        '200':
+          description: Returns new animal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Animal'
+        '400':
+          description: Fails with validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /animals/short:
+    get:
+      summary: Get animals (only homeless)
+      tags:
+        - Animals
+      responses:
+        '200':
+          description: Returns existing animals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnimalShort'
+        '400':
+          description: Query validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+  '/animals/{animalId}':
+    get:
+      summary: Get animal full information
+      tags:
+        - Animals
+      parameters:
+        - name: animalId
+          in: path
+          description: ID of animal to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns user info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Animal'
+        '404':
+          description: Animal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
+  '/animals/{animalId}/images':
+    post:
+      summary: Upload images for an animal
+      tags:
+        - AnimalImage
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: animalId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: File
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                _any_number_:
+                  type: string
+                  format: binary
+            example:
+              '1': file1.jpg
+              '2': file2.jpg
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              example:
+                success: true
+        '400':
+          description: Fails with validation errors or Fails with S3 error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Animal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
+  '/animals/{animalId}/images/${imageId}/order':
+    patch:
+      summary: Update image's order
+      tags:
+        - AnimalImage
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: animalId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_order:
+                  type: number
+              required:
+                - display_order
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              example:
+                success: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions / animal is not relates to the image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Animal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
+  '/animals/{animalId}/images/${imageId}':
+    delete:
+      summary: Delete image
+      tags:
+        - AnimalImage
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: animalId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              example:
+                success: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions / animal is not relates to the image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Animal/Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
 components:
   securitySchemes:
     AccessTokenAuth:
@@ -211,10 +546,19 @@ components:
           type: string
           format: uuid
           nullable: true
-        photos:
-          type: array
-          items:
-            type: string
+    AnimalImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        display_order:
+          type: integer
+        animal_id:
+          type: string
+          format: uuid
+        image_key:
+          type: string
     ValidationError:
       type: object
       properties:
@@ -241,4 +585,14 @@ components:
           type: boolean
           default: false
         error:
+          type: string
+    AnimalShort:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        photo:
           type: string

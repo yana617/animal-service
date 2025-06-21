@@ -1,4 +1,11 @@
-import { type FindManyOptions, type ObjectLiteral, type Repository } from 'typeorm';
+import {
+    type SelectQueryBuilder,
+    type DeepPartial,
+    type FindManyOptions,
+    type ObjectLiteral,
+    type Repository,
+    type FindOneOptions,
+} from 'typeorm';
 
 export class BaseRepository<T extends ObjectLiteral> {
     repository: Repository<T>;
@@ -7,7 +14,9 @@ export class BaseRepository<T extends ObjectLiteral> {
         this.repository = repository;
     }
 
-    async getAllWithCount(params: FindManyOptions<T> | undefined): Promise<[T[], number]> {
+    async getAllWithCount(
+        params: FindManyOptions<T> | undefined,
+    ): Promise<[T[], number]> {
         return await this.repository.findAndCount(params);
     }
 
@@ -15,19 +24,27 @@ export class BaseRepository<T extends ObjectLiteral> {
         return await this.repository.find(params);
     }
 
-    async getById(id): Promise<T | null> {
-        return await this.repository.findOneBy({ id });
+    async getById(id, relations?: string[]): Promise<T | null> {
+        return await this.repository.findOne({ where: { id }, relations });
     }
 
-    async create(data: T): Promise<T> {
-        return await this.repository.save(data);
+    async findOne(params: FindOneOptions<T>): Promise<T | null> {
+        return await this.repository.findOne(params);
     }
 
-    async updateById(id: string, data): Promise<void> {
+    async create(data: Omit<T, 'id'>): Promise<T> {
+        return await this.repository.save(data as T);
+    }
+
+    async updateById(id: string, data: DeepPartial<T>): Promise<void> {
         await this.repository.save({
             ...data,
             id,
         });
+    }
+
+    async updateByIdPartially(id: string, data: Partial<T>): Promise<void> {
+        await this.repository.update(id, data);
     }
 
     async deleteById(id: string): Promise<void> {
@@ -36,5 +53,13 @@ export class BaseRepository<T extends ObjectLiteral> {
 
     async deleteAll(): Promise<void> {
         await this.repository.delete({});
+    }
+
+    createQueryBuilder(alias?: string): SelectQueryBuilder<T> {
+        return this.repository.createQueryBuilder(alias);
+    }
+
+    async remove(entity: T): Promise<void> {
+        await this.repository.remove(entity);
     }
 }

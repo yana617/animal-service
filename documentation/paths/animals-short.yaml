@@ -1,0 +1,24 @@
+get:
+    summary: Get animals (only homeless)
+    tags:
+        - 'Animals'
+    responses:
+        '200':
+            description: Returns existing animals
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                            data:
+                                type: array
+                                items:
+                                    $ref: '../schemas/AnimalShort.yaml'
+        "400":
+            description: Query validation errors
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"

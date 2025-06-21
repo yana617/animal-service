@@ -1,0 +1,33 @@
+get:
+    summary: Get animal full information
+    tags:
+        - "Animals"
+    parameters:
+      - name: "animalId"
+        in: "path"
+        description: "ID of animal to return"
+        required: true
+        schema:
+            type: string
+    responses:
+        "200":
+            description: Returns user info
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                $ref: "../schemas/Animal.yaml"
+        "404":
+            description: Animal not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Animal not found"

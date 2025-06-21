@@ -1,0 +1,65 @@
+post:
+    summary: Upload images for an animal
+    tags:
+        - "AnimalImage"
+    security:
+        - AccessTokenAuth: []
+    parameters:
+      - name: "animalId"
+        in: "path"
+        required: true
+        schema:
+            type: string
+    requestBody:
+        required: true
+        description: File
+        content:
+            multipart/form-data:
+                schema:
+                    type: object
+                    properties:
+                        _any_number_:
+                            type: string
+                            format: binary
+                example:
+                    "1": "file1.jpg"
+                    "2": "file2.jpg"
+    responses:
+        "200":
+            description: Success
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                    example:
+                        success: true
+        "400":
+            description: Fails with validation errors or Fails with S3 error
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Fails with not enough permissions
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Animal not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Animal not found"

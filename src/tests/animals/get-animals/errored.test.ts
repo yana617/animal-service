@@ -1,5 +1,4 @@
 import request from 'supertest';
-import nock from 'nock';
 
 import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
@@ -7,7 +6,6 @@ import { app } from '../../fixtures/setup';
 describe('GET /animals', () => {
     beforeEach(async () => {
         await animalRepository.deleteAll();
-        nock.cleanAll();
     });
 
     test('Should fail with incorrect filters', async () => {
