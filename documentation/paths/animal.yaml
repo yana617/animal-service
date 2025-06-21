@@ -11,7 +11,7 @@ get:
             type: string
     responses:
         "200":
-            description: Returns user info
+            description: Returns animal info
             content:
                 application/json:
                     schema:
