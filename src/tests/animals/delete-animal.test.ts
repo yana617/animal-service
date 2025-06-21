@@ -6,12 +6,12 @@ import { animalRepository } from '../../repositories/animal.repository';
 import { app } from '../fixtures/setup';
 import { generateAnimal, generateAnimalImage } from '../fixtures/db';
 import { ERRORS } from '../../translates';
-import { BASE_URL } from '../fixtures/constants';
+import { AUTH_BASE_URL } from '../fixtures/constants';
 import { animalImageRepository } from '../../repositories/animal-image.repository';
 
 describe('DELETE /animals/:id request', () => {
     beforeEach(async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
     });
 
     afterEach(async () => {
@@ -21,7 +21,7 @@ describe('DELETE /animals/:id request', () => {
     });
 
     test('Should delete animal correctly', async () => {
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['DELETE_ANIMAL'] });
         const animalOne = await animalRepository.create(generateAnimal());
@@ -38,7 +38,7 @@ describe('DELETE /animals/:id request', () => {
     });
 
     test('Should delete images correctly', async () => {
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['DELETE_ANIMAL'] });
         const animalOne = await animalRepository.create(generateAnimal());
@@ -63,7 +63,7 @@ describe('DELETE /animals/:id request', () => {
     });
 
     test('Should fail with not found error', async () => {
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['DELETE_ANIMAL'] });
 
@@ -79,7 +79,7 @@ describe('DELETE /animals/:id request', () => {
     });
 
     test('Should fail without permissions', async () => {
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: [] });
         const animalOne = await animalRepository.create(generateAnimal());

@@ -7,7 +7,7 @@ import { animalImageRepository } from '../../../repositories/animal-image.reposi
 import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 import { ERRORS } from '../../../translates';
-import { BASE_URL } from '../../fixtures/constants';
+import { AUTH_BASE_URL } from '../../fixtures/constants';
 
 const mockEnv = {
     AWS_REGION: 'us-east-1',
@@ -16,7 +16,7 @@ const mockEnv = {
     AWS_BUCKET_NAME: 'test-bucket',
 };
 
-describe('DELETE /animals/:id/images - deleteImage', () => {
+describe('DELETE /animals/:id/images/:imageId - deleteImage', () => {
     beforeEach(() => {
         process.env = { ...mockEnv };
     });
@@ -28,8 +28,8 @@ describe('DELETE /animals/:id/images - deleteImage', () => {
     });
 
     it('should delete successfully', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -57,8 +57,8 @@ describe('DELETE /animals/:id/images - deleteImage', () => {
     });
 
     it('should update order correctly', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -103,8 +103,8 @@ describe('DELETE /animals/:id/images - deleteImage', () => {
 
     it('should return 500 if AWS config is missing', async () => {
         process.env = {};
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -125,8 +125,8 @@ describe('DELETE /animals/:id/images - deleteImage', () => {
     });
 
     it('should fail if image is not found', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -144,8 +144,8 @@ describe('DELETE /animals/:id/images - deleteImage', () => {
     });
 
     it('should fail if image is not related to the animal', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 

@@ -8,7 +8,7 @@ import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 import { imageKeyMock } from '../../fixtures/mocks/libs';
 import { ERRORS } from '../../../translates';
-import { BASE_URL } from '../../fixtures/constants';
+import { AUTH_BASE_URL } from '../../fixtures/constants';
 
 describe('POST /animals/:id/images - uploadImages', () => {
     afterEach(async () => {
@@ -18,8 +18,8 @@ describe('POST /animals/:id/images - uploadImages', () => {
     });
 
     it('should upload valid images', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -41,8 +41,8 @@ describe('POST /animals/:id/images - uploadImages', () => {
     });
 
     it('should increment display_order correctly', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -74,8 +74,8 @@ describe('POST /animals/:id/images - uploadImages', () => {
     });
 
     it('should fail if animal is not exist', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 
@@ -92,7 +92,7 @@ describe('POST /animals/:id/images - uploadImages', () => {
     });
 
     it('should fail with auth error', async () => {
-        nock(BASE_URL).get('/auth').reply(401, { success: false });
+        nock(AUTH_BASE_URL).get('/auth').reply(401, { success: false });
 
         const response = await request(app)
             .post('/animals/invalid-id/images')
@@ -106,8 +106,8 @@ describe('POST /animals/:id/images - uploadImages', () => {
     });
 
     it('should fail with not enough permissions error', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: [] });
 

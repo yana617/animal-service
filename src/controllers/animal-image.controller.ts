@@ -1,4 +1,4 @@
-import { type Request, type Response } from 'express';
+import { type Response } from 'express';
 
 import { type Animal } from '../database/models/animal';
 import { ERRORS } from '../translates';
@@ -9,12 +9,12 @@ import { deleteImageFromAWS } from '../utils/delete-image-from-AWS';
 import {
     type FileType,
     type RequestWithAnimal,
-    type DeleteImageRequestParams,
+    type ImageRequestParams,
     type UpdateOrderRequestBody,
 } from './types';
 
 const uploadImages = async (
-    req: Request<{ id: string }, Omit<Animal, 'id'>> & { animal: Animal },
+    req: RequestWithAnimal<{ id: string }, Omit<Animal, 'id'>>,
     res: Response,
 ): Promise<void> => {
     const files = req.files as FileType[];
@@ -38,10 +38,7 @@ const uploadImages = async (
 };
 
 const updateOrder = async (
-    req: RequestWithAnimal<
-        { id: string; imageId: string },
-        UpdateOrderRequestBody
-    >,
+    req: RequestWithAnimal<ImageRequestParams, UpdateOrderRequestBody>,
     res: Response,
 ): Promise<void> => {
     const { imageId } = req.params;
@@ -96,7 +93,7 @@ const updateOrder = async (
 };
 
 const deleteImage = async (
-    req: RequestWithAnimal<DeleteImageRequestParams, unknown>,
+    req: RequestWithAnimal<ImageRequestParams, unknown>,
     res: Response,
 ): Promise<any> => {
     const { id: animalId, imageId } = req.params;

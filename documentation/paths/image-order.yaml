@@ -38,6 +38,12 @@ patch:
                                 type: boolean
                     example:
                         success: true
+        "400":
+            description: Fails with validation errors
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
         "401":
             description: Unauthorized
             content:

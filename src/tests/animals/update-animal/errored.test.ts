@@ -4,14 +4,14 @@ import nock from 'nock';
 import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 import { generateAnimal } from '../../fixtures/db';
-import { BASE_URL } from '../../fixtures/constants';
+import { AUTH_BASE_URL } from '../../fixtures/constants';
 import { ERRORS } from '../../../translates';
 import { AnimalType } from '../../../database/models/animal';
 
-describe('POST /animals request - errored', () => {
+describe('PATCH /animals/:id request - errored', () => {
     beforeEach(async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
     });
@@ -85,7 +85,7 @@ describe('POST /animals request - errored', () => {
 
     test('Should fail with auth error', async () => {
         nock.cleanAll();
-        nock(BASE_URL).get('/auth').reply(401, { success: false });
+        nock(AUTH_BASE_URL).get('/auth').reply(401, { success: false });
         const animalOne = await animalRepository.create(generateAnimal());
 
         const response = await request(app)
@@ -102,8 +102,8 @@ describe('POST /animals request - errored', () => {
 
     test('Should fail with permissions error', async () => {
         nock.cleanAll();
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: [] });
         const animalOne = await animalRepository.create(generateAnimal());

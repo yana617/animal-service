@@ -25,16 +25,11 @@ export type GetAnimalsQuery = {
     skip?: string;
 };
 
-export type ResponseType<T> = {
-    success: boolean;
-    data: T;
-};
-
 export type UpdateOrderRequestBody = {
     display_order: number;
 };
 
-export type DeleteImageRequestParams = {
+export type ImageRequestParams = {
     id: string;
     imageId: string;
 };

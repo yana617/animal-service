@@ -7,7 +7,7 @@ import { animalImageRepository } from '../../../repositories/animal-image.reposi
 import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 import { ERRORS } from '../../../translates';
-import { BASE_URL } from '../../fixtures/constants';
+import { AUTH_BASE_URL } from '../../fixtures/constants';
 
 const animal1Mock = generateAnimal();
 const image1Mock = generateAnimalImage(animal1Mock);
@@ -16,12 +16,12 @@ const image3Mock = generateAnimalImage(animal1Mock, { display_order: 3 });
 const image4Mock = generateAnimalImage(animal1Mock, { display_order: 4 });
 const image5Mock = generateAnimalImage(animal1Mock, { display_order: 5 });
 
-describe('PATCH /animals/:id/images/order', () => {
+describe('PATCH /animals/:id/images/:imageId/order', () => {
     let animal1, image1, image2, image3, image4, image5;
 
     beforeEach(async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 

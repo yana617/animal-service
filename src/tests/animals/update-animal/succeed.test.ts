@@ -4,18 +4,18 @@ import nock from 'nock';
 import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 import { generateAnimal } from '../../fixtures/db';
-import { BASE_URL } from '../../fixtures/constants';
+import { AUTH_BASE_URL } from '../../fixtures/constants';
 import { AnimalType } from '../../../database/models/animal';
 
-describe('PATCH /animals request', () => {
+describe('PATCH /animals/:id request - succeed', () => {
     afterEach(async () => {
         await animalRepository.deleteAll();
         nock.cleanAll();
     });
 
     test('Should update animal successfully', async () => {
-        nock(BASE_URL).get('/auth').reply(200, { success: true });
-        nock(BASE_URL)
+        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
+        nock(AUTH_BASE_URL)
             .get('/permissions/me')
             .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
 

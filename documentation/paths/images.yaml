@@ -36,12 +36,6 @@ post:
                                 type: boolean
                     example:
                         success: true
-        "400":
-            description: Fails with validation errors or Fails with S3 error
-            content:
-                application/json:
-                    schema:
-                        $ref: "../schemas/ValidationError.yaml"
         "401":
             description: Unauthorized
             content:
@@ -63,3 +57,5 @@ post:
                     example:
                         success: false
                         error: "Animal not found"
+        "500":
+            description: Fails with S3 error

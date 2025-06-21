@@ -275,7 +275,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Returns user info
+          description: Returns animal info
           content:
             application/json:
               schema:
@@ -286,6 +286,104 @@ paths:
                     example: true
                   data:
                     $ref: '#/components/schemas/Animal'
+        '400':
+          description: Fails with validation errors (id uuid)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Animal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
+    patch:
+      summary: Update animal information
+      tags:
+        - Animals
+      parameters:
+        - name: animalId
+          in: path
+          description: ID of animal to update
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Fails with validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Animal not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Animal not found
+    delete:
+      summary: Delete animal
+      tags:
+        - Animals
+      parameters:
+        - name: animalId
+          in: path
+          description: ID of animal to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted (with images)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Fails with not enough permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
           description: Animal not found
           content:
@@ -334,12 +432,6 @@ paths:
                     type: boolean
               example:
                 success: true
-        '400':
-          description: Fails with validation errors or Fails with S3 error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
         '401':
           description: Unauthorized
           content:
@@ -361,6 +453,8 @@ paths:
               example:
                 success: false
                 error: Animal not found
+        '500':
+          description: Fails with S3 error
   '/animals/{animalId}/images/${imageId}/order':
     patch:
       summary: Update image's order
@@ -402,6 +496,12 @@ paths:
                     type: boolean
               example:
                 success: true
+        '400':
+          description: Fails with validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
         '401':
           description: Unauthorized
           content:
