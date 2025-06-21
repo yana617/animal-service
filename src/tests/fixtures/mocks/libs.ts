@@ -10,8 +10,6 @@ jest.mock('@aws-sdk/client-s3', () => ({
 
 jest.mock('multer', () => {
     const multer = (): any => ({
-        single: () => (req: any, res: any, next: any) => next(),
-        array: () => (req: any, res: any, next: any) => next(),
         any: () => (req: any, res: any, next: any) => {
             req.files = [
                 {

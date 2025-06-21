@@ -229,18 +229,48 @@ const updateAnimal = async (
     res: Response,
 ): Promise<any> => {
     const { id } = req.params;
-    const { type, height } = req.body;
+    const {
+        name,
+        type,
+        place,
+        room,
+        birthday,
+        sex,
+        curator_id,
+        description,
+        second_birthday,
+        status,
+        advertising_text,
+        height,
+        sterilized,
+        taken_home_date,
+        health_details,
+    } = req.body;
 
     if (type === AnimalType.DOG && !height) {
         return res
             .status(400)
             .json({ success: false, error: ERRORS.DOG_HEIGHT_REQUIRED });
     }
-    if (type !== AnimalType.DOG) {
-        delete req.body.height;
-    }
 
-    await animalRepository.updateById(id, req.body);
+    await animalRepository.updateById(id, {
+        name,
+        type,
+        place,
+        room,
+        birthday,
+        sex,
+        curator_id,
+        description,
+        second_birthday,
+        status,
+        advertising_text,
+        height: type === AnimalType.DOG ? height : undefined,
+        sterilized,
+        taken_home_date,
+        health_details,
+        photos: [],
+    });
 
     res.json({
         success: true,

@@ -13,7 +13,7 @@ import {
 } from '../../../database/models/animal';
 
 describe('GET /animals', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
         nock.cleanAll();
     });

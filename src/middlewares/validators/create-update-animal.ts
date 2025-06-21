@@ -12,7 +12,7 @@ export const createUpdateAnimalValidator = [
     body('second_birthday').isISO8601(),
     body('height').optional({ nullable: true }).isInt({ min: 10, max: 80 }),
     body('sterilized').isBoolean(),
-    body('curator_id').optional({ nullable: true }).isString(),
+    body('curator_id').optional({ nullable: true }).isUUID(),
     body('health_details').optional({ nullable: true }).isString(),
     body('advertising_text').optional().isString(),
     body('description').optional({ nullable: true }).isString(),

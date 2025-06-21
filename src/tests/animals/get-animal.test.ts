@@ -6,7 +6,7 @@ import { generateAnimal } from '../fixtures/db';
 import { ERRORS } from '../../translates';
 
 describe('GET /animals/:id request', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
     });
 

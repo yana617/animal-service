@@ -8,7 +8,7 @@ import { BASE_URL } from '../../fixtures/constants';
 import { AnimalType } from '../../../database/models/animal';
 
 describe('POST /animals request', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
     });
 

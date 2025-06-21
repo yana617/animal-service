@@ -7,7 +7,7 @@ import { AUTH_SERVICE_URL } from '../../../constant/auth-service-url';
 import { app } from '../../fixtures/setup';
 
 describe('GET /animals', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
         nock.cleanAll();
     });

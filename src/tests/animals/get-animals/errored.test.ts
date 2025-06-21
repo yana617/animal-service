@@ -4,7 +4,7 @@ import { animalRepository } from '../../../repositories/animal.repository';
 import { app } from '../../fixtures/setup';
 
 describe('GET /animals', () => {
-    beforeEach(async () => {
+    afterEach(async () => {
         await animalRepository.deleteAll();
     });
 
