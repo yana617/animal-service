@@ -1,20 +1,20 @@
-FROM node:18.16.0
-LABEL maintainer="jana.ru.sidorova@yandex.ru"
-ENV NODE_ENV=development PORT=1083
+FROM node:22.16.0
+LABEL maintainer="jana.ru.sidorova@yandex.by"
+ENV NODE_ENV=production PORT=1083
 
-RUN mkdir -p /usr/src/animal-service
-WORKDIR /usr/src/animal-service
+RUN mkdir -p /usr/src/animal-service-dev
+WORKDIR /usr/src/animal-service-dev
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install
+RUN npm install --omit=dev
 
 COPY . .
 
 EXPOSE 1083
 
-COPY ./bin/dev-docker-entrypoint.sh /bin/dev-docker-entrypoint.sh
+COPY ./bin/prod-docker-entrypoint.sh /bin/prod-docker-entrypoint.sh
 
-RUN chmod +x /bin/dev-docker-entrypoint.sh
+RUN chmod +x /bin/prod-docker-entrypoint.sh
 
-ENTRYPOINT ["/bin/dev-docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/prod-docker-entrypoint.sh"]
