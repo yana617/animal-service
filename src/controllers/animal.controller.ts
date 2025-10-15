@@ -132,7 +132,8 @@ const getAllShort = async (_, res: Response): Promise<void> => {
         )
         .select(['animal.id', 'animal.name', 'photo'])
         .where('animal.status = :status', { status: Status.HOMELESS })
-        .orderBy('animal.name', 'ASC')
+        .orderBy('animal.type', 'ASC')
+        .addOrderBy('animal.name', 'ASC')
         .getManyAndCount();
 
     res.json({
@@ -189,7 +190,6 @@ const createAnimal = async (
         advertising_text,
         height,
         sterilized,
-        taken_home_date,
         health_details,
     } = req.body;
 
@@ -213,7 +213,6 @@ const createAnimal = async (
         advertising_text,
         height: type === AnimalType.DOG ? height : undefined,
         sterilized,
-        taken_home_date,
         health_details,
         photos: [],
     });
@@ -225,7 +224,7 @@ const createAnimal = async (
 };
 
 const updateAnimal = async (
-    req: Request<{ id: string }, Omit<Animal, 'id'>>,
+    req: RequestWithAnimal<{ id: string }, Omit<Animal, 'id'>>,
     res: Response,
 ): Promise<any> => {
     const { id } = req.params;
@@ -243,7 +242,6 @@ const updateAnimal = async (
         advertising_text,
         height,
         sterilized,
-        taken_home_date,
         health_details,
     } = req.body;
 
@@ -267,9 +265,11 @@ const updateAnimal = async (
         advertising_text,
         height: type === AnimalType.DOG ? height : undefined,
         sterilized,
-        taken_home_date,
+        taken_home_date:
+            req.animal.status !== Status.ADOPTED && status === Status.ADOPTED
+                ? new Date().toISOString()
+                : null as any,
         health_details,
-        photos: [],
     });
 
     res.json({
