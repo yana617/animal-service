@@ -54,6 +54,7 @@ router.patch(
     checkPermissions(['EDIT_ANIMAL']),
     createUpdateAnimalValidator,
     checkValidationErrors,
+    asyncErrorHandler(checkAnimalExistence),
     asyncErrorHandler(animalController.updateAnimal),
 );
 

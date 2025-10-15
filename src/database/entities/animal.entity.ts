@@ -76,6 +76,7 @@ export class Animal implements AnimalModel {
     sterilized: boolean;
 
     @Column({ nullable: true })
+    @IsOptional()
     @IsDate()
     taken_home_date?: Date;
 
