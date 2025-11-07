@@ -22,6 +22,9 @@ describe('GET /animals/short', () => {
         await animalRepository.create(
             generateAnimal({ status: Status.PREPARATION }),
         );
+        await animalRepository.create(
+            generateAnimal({ status: Status.ADOPTED }),
+        );
 
         const response = await request(app)
             .get('/animals/short')
@@ -30,7 +33,7 @@ describe('GET /animals/short', () => {
 
         const { data: res } = response.body;
         expect(res.animals).toBeDefined();
-        expect(res.animals.length).toEqual(2);
+        expect(res.animals.length).toEqual(3);
 
         expect(res.animals.find((a) => a.name === animal1Mock.name).photo).toBeDefined();
     });
