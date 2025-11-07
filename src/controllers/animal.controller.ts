@@ -131,7 +131,7 @@ const getAllShort = async (_, res: Response): Promise<void> => {
             { displayOrder: 1 },
         )
         .select(['animal.id', 'animal.name', 'photo'])
-        .where('animal.status = :status', { status: Status.HOMELESS })
+        .where('animal.status IN (:...statuses)', { statuses: [Status.HOMELESS, Status.PREPARATION] })
         .orderBy('animal.type', 'ASC')
         .addOrderBy('animal.name', 'ASC')
         .getManyAndCount();
