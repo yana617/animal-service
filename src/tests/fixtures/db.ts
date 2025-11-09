@@ -9,6 +9,7 @@ import {
     Status,
 } from '../../database/models/animal';
 import type { AnimalImage } from '../../database/models/animal-image';
+import { type Platform } from '../../database/models/platform';
 
 export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     id: options.id || v4(),
@@ -35,4 +36,11 @@ export const generateAnimalImage = (
     animal,
     image_key: `${animal.id}/${v4()}.png`,
     display_order: options.display_order || 1,
+});
+
+export const generatePlatform = (
+    options: Partial<Platform> = {},
+): Platform => ({
+    id: options.id || v4(),
+    name: options.name || faker.lorem.words(1),
 });
