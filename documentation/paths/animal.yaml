@@ -1,7 +1,7 @@
 get:
     summary: Get animal full information
     tags:
-        - "Animals"
+        - Animal
     parameters:
       - name: "animalId"
         in: "path"
@@ -40,7 +40,7 @@ get:
 patch:
     summary: Update animal information
     tags:
-        - "Animals"
+        - Animal
     parameters:
       - name: "animalId"
         in: "path"
@@ -89,7 +89,7 @@ patch:
 delete:
     summary: Delete animal
     tags:
-        - "Animals"
+        - Animal
     parameters:
       - name: "animalId"
         in: "path"
