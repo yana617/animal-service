@@ -1,0 +1,68 @@
+get:
+    summary: Get animals statistics by age groups
+    description: |
+        Retrieve statistics of homeless animals grouped by age ranges.
+        Returns age groups in Russian language with proper plural forms.
+        Automatically stops at the last age group that has animals (no empty trailing groups).
+    tags:
+        - "Stats"
+    security:
+        - AccessTokenAuth: []
+    responses:
+        "200":
+            description: Successful operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        age:
+                                            type: string
+                                            description: Age group label in Russian
+                                            enum:
+                                                - "меньше 1 года"
+                                                - "1 год"
+                                                - "2 года"
+                                                - "3 года"
+                                                - "4 года"
+                                                - "5 лет"
+                                                - "6 лет"
+                                                - "7 лет"
+                                                - "8 лет"
+                                                - "9 лет"
+                                                - "10 лет"
+                                                - "11 лет"
+                                                - "12 лет"
+                                                - "13 лет"
+                                                - "14 лет"
+                                                - "15 лет"
+                                                - "16 лет"
+                                                - "17 лет"
+                                                - "18 лет"
+                                                - "19 лет"
+                                                - "20 лет"
+                                        count:
+                                            type: integer
+                                            description: Number of animals in this age group
+                                            minimum: 0
+                                example:
+                                    - age: "меньше 1 года"
+                                      count: 2
+                                    - age: "1 год"
+                                      count: 3
+                                    - age: "2 года"
+                                      count: 1
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"

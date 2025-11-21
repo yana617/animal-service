@@ -722,6 +722,149 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /stats/animals-per-age:
+    get:
+      summary: Get animals statistics by age groups
+      description: |
+        Retrieve statistics of homeless animals grouped by age ranges.
+        Returns age groups in Russian language with proper plural forms.
+        Automatically stops at the last age group that has animals (no empty trailing groups).
+      tags:
+        - Stats
+      security:
+        - AccessTokenAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        age:
+                          type: string
+                          description: Age group label in Russian
+                          enum:
+                            - меньше 1 года
+                            - 1 год
+                            - 2 года
+                            - 3 года
+                            - 4 года
+                            - 5 лет
+                            - 6 лет
+                            - 7 лет
+                            - 8 лет
+                            - 9 лет
+                            - 10 лет
+                            - 11 лет
+                            - 12 лет
+                            - 13 лет
+                            - 14 лет
+                            - 15 лет
+                            - 16 лет
+                            - 17 лет
+                            - 18 лет
+                            - 19 лет
+                            - 20 лет
+                        count:
+                          type: integer
+                          description: Number of animals in this age group
+                          minimum: 0
+                    example:
+                      - age: меньше 1 года
+                        count: 2
+                      - age: 1 год
+                        count: 3
+                      - age: 2 года
+                        count: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /stats/adopted-per-month:
+    get:
+      summary: Get monthly adoption statistics for the last 12 months
+      description: |
+        Retrieve statistics of adopted animals grouped by month for the past 12 months.
+        Returns monthly adoption counts with Russian month names and years.
+        Includes all months in the 12-month period, even those with zero adoptions.
+        Only includes animals with status 'adopted' and non-null taken_home_date.
+      tags:
+        - Stats
+      security:
+        - AccessTokenAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    description: Array of monthly adoption statistics for the last 12 months
+                    items:
+                      type: object
+                      properties:
+                        month:
+                          type: string
+                          description: Month and year in Russian format
+                          example: Январь 2024
+                        count:
+                          type: integer
+                          description: Number of animals adopted in this month
+                          minimum: 0
+                    example:
+                      - month: Январь 2024
+                        count: 5
+                      - month: Февраль 2024
+                        count: 3
+                      - month: Март 2024
+                        count: 7
+                      - month: Апрель 2024
+                        count: 2
+                      - month: Май 2024
+                        count: 4
+                      - month: Июнь 2024
+                        count: 6
+                      - month: Июль 2024
+                        count: 1
+                      - month: Август 2024
+                        count: 3
+                      - month: Сентябрь 2024
+                        count: 0
+                      - month: Октябрь 2024
+                        count: 2
+                      - month: Ноябрь 2024
+                        count: 4
+                      - month: Декабрь 2024
+                        count: 1
+        '401':
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - User lacks required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     AccessTokenAuth:
