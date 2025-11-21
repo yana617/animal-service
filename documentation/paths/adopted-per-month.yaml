@@ -1,0 +1,73 @@
+get:
+    summary: Get monthly adoption statistics for the last 12 months
+    description: |
+        Retrieve statistics of adopted animals grouped by month for the past 12 months.
+        Returns monthly adoption counts with Russian month names and years.
+        Includes all months in the 12-month period, even those with zero adoptions.
+        Only includes animals with status 'adopted' and non-null taken_home_date.
+    tags:
+        - "Stats"
+    security:
+        - AccessTokenAuth: []
+    responses:
+        "200":
+            description: Successful operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                type: array
+                                description: Array of monthly adoption statistics for the last 12 months
+                                items:
+                                    type: object
+                                    properties:
+                                        month:
+                                            type: string
+                                            description: Month and year in Russian format
+                                            example: "Январь 2024"
+                                        count:
+                                            type: integer
+                                            description: Number of animals adopted in this month
+                                            minimum: 0
+                                example:
+                                    - month: "Январь 2024"
+                                      count: 5
+                                    - month: "Февраль 2024"
+                                      count: 3
+                                    - month: "Март 2024"
+                                      count: 7
+                                    - month: "Апрель 2024"
+                                      count: 2
+                                    - month: "Май 2024"
+                                      count: 4
+                                    - month: "Июнь 2024"
+                                      count: 6
+                                    - month: "Июль 2024"
+                                      count: 1
+                                    - month: "Август 2024"
+                                      count: 3
+                                    - month: "Сентябрь 2024"
+                                      count: 0
+                                    - month: "Октябрь 2024"
+                                      count: 2
+                                    - month: "Ноябрь 2024"
+                                      count: 4
+                                    - month: "Декабрь 2024"
+                                      count: 1
+        "401":
+            description: Unauthorized - Invalid or missing access token
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Forbidden - User lacks required permissions
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"

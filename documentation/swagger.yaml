@@ -27,6 +27,10 @@ paths:
     $ref: "./paths/platforms.yaml"
   /platforms/{platformId}:
     $ref: "./paths/platform.yaml"
+  /stats/animals-per-age:
+    $ref: "./paths/animals-per-age.yaml"
+  /stats/adopted-per-month:
+    $ref: "./paths/adopted-per-month.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

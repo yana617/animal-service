@@ -26,6 +26,7 @@ export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     sterilized: options.sterilized || faker.datatype.boolean(),
     photos: options.photos || [],
     height: options.height || faker.datatype.number({ min: 20, max: 80 }),
+    taken_home_date: options.taken_home_date || undefined,
 });
 
 export const generateAnimalImage = (
