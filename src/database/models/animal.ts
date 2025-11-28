@@ -1,3 +1,4 @@
+import { type Ad } from './ad';
 import type { AnimalImage } from './animal-image';
 
 export enum Place {
@@ -46,5 +47,6 @@ export type Animal = {
     taken_home_date?: Date;
     health_details?: string;
     photos: AnimalImage[];
+    ads: Ad[];
     photo?: AnimalImage;
 };

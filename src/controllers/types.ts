@@ -37,3 +37,8 @@ export type ImageRequestParams = {
 export type FileType = Express.Multer.File & { key: string };
 
 export type RequestWithAnimal<T, T2> = Request<T, T2> & { animal: Animal };
+
+export type GetAdsQuery = {
+    sortByPlatform?: string;
+    sortOrder?: 'ASC' | 'DESC';
+};
