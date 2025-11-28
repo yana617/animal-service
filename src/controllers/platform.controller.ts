@@ -34,7 +34,7 @@ const getPlatform = async (req: Request, res: Response): Promise<void> => {
 const createPlatform = async (req: Request, res: Response): Promise<void> => {
     const { name } = req.body;
 
-    const platform = await platformRepository.create({ name });
+    const platform = await platformRepository.create({ name, ads: [] });
 
     res.json({ success: true, data: platform });
 };

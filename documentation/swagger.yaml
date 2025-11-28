@@ -31,6 +31,8 @@ paths:
     $ref: "./paths/animals-per-age.yaml"
   /stats/adopted-per-month:
     $ref: "./paths/adopted-per-month.yaml"
+  /ads:
+    $ref: "./paths/ads.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

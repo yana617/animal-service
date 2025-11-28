@@ -215,6 +215,7 @@ const createAnimal = async (
         sterilized,
         health_details,
         photos: [],
+        ads: [],
     });
 
     res.json({
