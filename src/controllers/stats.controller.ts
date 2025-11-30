@@ -1,10 +1,14 @@
 import { type Request, type Response } from 'express';
+import { Between } from 'typeorm';
 
 import { animalRepository } from '../repositories/animal.repository';
 import { Status } from '../database/models/animal';
 import { calculateAgeInYears } from '../utils/calculate-age-in-years';
 import { generateAgeGroups } from '../utils/stats/generate-age-groups';
 import { formatMonthlyResultsLast12Months } from '../utils/stats/format-monthly-results-last-12-months';
+import { adRepository } from '../repositories/ad.repository';
+import { calculateWeeklyStats } from '../utils/stats/calculate-ads-per-week';
+import { calculateMonthlyStats } from '../utils/stats/calculate-ads-per-month';
 
 const getAnimalsPerAge = async (req: Request, res: Response): Promise<void> => {
     const homelessAnimals = await animalRepository.getAll({
@@ -72,7 +76,43 @@ const getAdoptedAnimalsPerMonth = async (
     });
 };
 
+const getAdsPerTime = async (req: Request, res: Response): Promise<void> => {
+    const { type = 'week' } = req.query;
+
+    const endDate = new Date();
+    const startDate = new Date();
+
+    if (type === 'week') {
+        startDate.setFullYear(endDate.getFullYear() - 1);
+    } else {
+        startDate.setDate(endDate.getDate() - 13 * 7);
+    }
+
+    const ads = await adRepository.getAll({
+        where: {
+            date: Between(startDate, endDate),
+        },
+    });
+
+    let stats;
+
+    if (type === 'week') {
+        stats = calculateWeeklyStats(ads, endDate);
+    } else {
+        stats = calculateMonthlyStats(ads, endDate);
+    }
+
+    res.json({
+        success: true,
+        data: {
+            stats,
+            total: stats.reduce((sum, week) => sum + week.count, 0),
+        },
+    });
+};
+
 export const statsController = {
     getAnimalsPerAge,
     getAdoptedAnimalsPerMonth,
+    getAdsPerTime,
 };
