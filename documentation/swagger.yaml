@@ -31,6 +31,8 @@ paths:
     $ref: "./paths/animals-per-age.yaml"
   /stats/adopted-per-month:
     $ref: "./paths/adopted-per-month.yaml"
+  /stats/ads-per-time:
+    $ref: "./paths/ads-per-time.yaml"
   /ads:
     $ref: "./paths/ads.yaml"
 components:

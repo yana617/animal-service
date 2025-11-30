@@ -24,4 +24,11 @@ router.get(
     asyncErrorHandler(statsController.getAdoptedAnimalsPerMonth),
 );
 
+router.get(
+    '/ads-per-time',
+    authRequired,
+    checkPermissions(['VIEW_RATING']),
+    asyncErrorHandler(statsController.getAdsPerTime),
+);
+
 export const statsRoute = router;

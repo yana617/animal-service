@@ -865,6 +865,132 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /stats/ads-per-time:
+    get:
+      summary: Get advertisement statistics grouped by time period
+      description: |
+        Retrieve statistics of advertisements grouped by week or month for specific time periods.
+        - Weekly stats: Returns 13 weeks of data (current week + previous 12 weeks)
+        - Monthly stats: Returns 12 months of data (current month + previous 11 months)
+        Includes all time periods in the range, even those with zero advertisements.
+      tags:
+        - Stats
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: type
+          in: query
+          description: Time period grouping type
+          required: false
+          schema:
+            type: string
+            enum:
+              - week
+              - month
+            default: week
+          example: week
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      stats:
+                        type: array
+                        description: Array of advertisement statistics grouped by time period
+                        items:
+                          oneOf:
+                            - type: object
+                              properties:
+                                week:
+                                  type: string
+                                  description: ISO week format (YYYY-Www)
+                                  example: 2024-W40
+                                week_short:
+                                  type: string
+                                  description: Short week format (WW/YY)
+                                  example: 40/24
+                                start_date:
+                                  type: string
+                                  format: date
+                                  description: Start date of the week (YYYY-MM-DD)
+                                  example: '2024-09-30'
+                                end_date:
+                                  type: string
+                                  format: date
+                                  description: End date of the week (YYYY-MM-DD)
+                                  example: '2024-10-06'
+                                count:
+                                  type: integer
+                                  description: Number of advertisements in this week
+                                  minimum: 0
+                            - type: object
+                              properties:
+                                month:
+                                  type: string
+                                  description: ISO month format (YYYY-MM)
+                                  example: 2024-10
+                                month_short:
+                                  type: string
+                                  description: Short month format (MMM 'YY)
+                                  example: Oct '24
+                                start_date:
+                                  type: string
+                                  format: date
+                                  description: Start date of the month (YYYY-MM-DD)
+                                  example: '2024-10-01'
+                                end_date:
+                                  type: string
+                                  format: date
+                                  description: End date of the month (YYYY-MM-DD)
+                                  example: '2024-10-31'
+                                count:
+                                  type: integer
+                                  description: Number of advertisements in this month
+                                  minimum: 0
+                      total:
+                        type: integer
+                        description: Total number of advertisements in the entire period
+                        minimum: 0
+                        example: 42
+                    example:
+                      stats:
+                        - week: 2024-W40
+                          week_short: 40/24
+                          start_date: '2024-09-30'
+                          end_date: '2024-10-06'
+                          count: 5
+                        - week: 2024-W41
+                          week_short: 41/24
+                          start_date: '2024-10-07'
+                          end_date: '2024-10-13'
+                          count: 3
+                        - week: 2024-W42
+                          week_short: 42/24
+                          start_date: '2024-10-14'
+                          end_date: '2024-10-20'
+                          count: 7
+                      total: 15
+        '401':
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - User lacks required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /ads:
     get:
       summary: Get animals with ads information
