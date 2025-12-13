@@ -35,6 +35,8 @@ paths:
     $ref: "./paths/ads-per-time.yaml"
   /ads:
     $ref: "./paths/ads.yaml"
+  /ads/{adId}:
+    $ref: "./paths/ad.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

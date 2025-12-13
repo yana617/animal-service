@@ -5,6 +5,7 @@ import { animalRepository } from '../repositories/animal.repository';
 import { type GetAdsQuery } from './types';
 import { platformRepository } from '../repositories/platform.repository';
 import { ERRORS } from '../translates';
+import { adRepository } from '../repositories/ad.repository';
 
 const getAdsForHomeless = async (
     req: Request<{}, {}, {}, GetAdsQuery>,
@@ -72,6 +73,76 @@ const getAdsForHomeless = async (
     });
 };
 
+export const createAd = async (req: Request, res: Response): Promise<void> => {
+    const { user_id, animal_id, platform_id, date } = req.body;
+
+    const animal = await animalRepository.getById(animal_id);
+
+    if (!animal) {
+        res.status(404).json({
+            success: false,
+            error: ERRORS.ANIMAL_NOT_FOUND,
+        });
+        return;
+    }
+
+    const platform = await platformRepository.getById(platform_id);
+
+    if (!platform) {
+        res.status(404).json({
+            success: false,
+            error: ERRORS.PLATFORM_NOT_FOUND,
+        });
+        return;
+    }
+
+    const createdAd = await adRepository.create({
+        date,
+        user_id,
+        animal,
+        platform,
+    });
+
+    res.json({
+        success: true,
+        data: createdAd,
+    });
+};
+
+export const deleteAd = async (
+    req: Request & { user?: { id: string; role: string } },
+    res: Response,
+): Promise<void> => {
+    const { id } = req.params;
+
+    const ad = await adRepository.getById(id);
+
+    if (!ad) {
+        res.status(404).json({
+            success: false,
+            error: ERRORS.AD_NOT_FOUND,
+        });
+        return;
+    }
+
+    if (
+        !req.user ||
+        (req.user.role !== 'ADMIN' && req.user.id !== ad.user_id)
+    ) {
+        res.status(403).json({
+            success: false,
+            error: ERRORS.FORBIDDEN,
+        });
+        return;
+    }
+
+    await adRepository.deleteById(id);
+
+    res.json({ success: true });
+};
+
 export const adsController = {
     getAdsForHomeless,
+    createAd,
+    deleteAd,
 };

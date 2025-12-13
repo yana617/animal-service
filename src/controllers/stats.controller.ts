@@ -83,9 +83,9 @@ const getAdsPerTime = async (req: Request, res: Response): Promise<void> => {
     const startDate = new Date();
 
     if (type === 'week') {
-        startDate.setFullYear(endDate.getFullYear() - 1);
+        startDate.setDate(endDate.getDate() - 12 * 7);
     } else {
-        startDate.setDate(endDate.getDate() - 13 * 7);
+        startDate.setFullYear(endDate.getFullYear() - 1);
     }
 
     const ads = await adRepository.getAll({

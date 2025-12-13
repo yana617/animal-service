@@ -20,19 +20,14 @@ describe('GET /stats/adopted-per-month request', () => {
             .get('/permissions/me')
             .reply(200, { success: true, data: ['VIEW_RATING'] });
 
-        const todayMaybeFirst = new Date();
-        const today = new Date(
-            todayMaybeFirst.getFullYear(),
-            todayMaybeFirst.getMonth(),
-            28,
-        );
+        const today = new Date();
 
         const currentMonthAnimal = generateAnimal({
             status: Status.ADOPTED,
             taken_home_date: new Date(
                 today.getFullYear(),
                 today.getMonth(),
-                15,
+                today.getDay() > 15 ? 15 : today.getDay(),
             ),
         });
 

@@ -39,7 +39,10 @@ const checkAuth = async (token): Promise<void> => await get({ url: '/auth', toke
 
 const getPermissions = async (token): Promise<string[]> => await get({ url: '/permissions/me', token });
 
+const getUser = async (token): Promise<any> => await get({ url: '/users/me', token });
+
 export const authServiceApi = {
     checkAuth,
     getPermissions,
+    getUser,
 };

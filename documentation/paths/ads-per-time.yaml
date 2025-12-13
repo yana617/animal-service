@@ -2,7 +2,7 @@ get:
     summary: Get advertisement statistics grouped by time period
     description: |
         Retrieve statistics of advertisements grouped by week or month for specific time periods.
-        - Weekly stats: Returns 13 weeks of data (current week + previous 12 weeks)
+        - Weekly stats: Returns 12 weeks of data (current week + previous 12 weeks)
         - Monthly stats: Returns 12 months of data (current month + previous 11 months)
         Includes all time periods in the range, even those with zero advertisements.
     tags:
@@ -44,10 +44,6 @@ get:
                                                           type: string
                                                           description: ISO week format (YYYY-Www)
                                                           example: "2024-W40"
-                                                      week_short:
-                                                          type: string
-                                                          description: Short week format (WW/YY)
-                                                          example: "40/24"
                                                       start_date:
                                                           type: string
                                                           format: date
@@ -93,18 +89,15 @@ get:
                                         example: 42
                                 example:
                                     stats:
-                                        - week: "2024-W40"
-                                          week_short: "40/24"
+                                        - week: "30.09-6.10"
                                           start_date: "2024-09-30"
                                           end_date: "2024-10-06"
                                           count: 5
                                         - week: "2024-W41"
-                                          week_short: "41/24"
                                           start_date: "2024-10-07"
                                           end_date: "2024-10-13"
                                           count: 3
                                         - week: "2024-W42"
-                                          week_short: "42/24"
                                           start_date: "2024-10-14"
                                           end_date: "2024-10-20"
                                           count: 7
