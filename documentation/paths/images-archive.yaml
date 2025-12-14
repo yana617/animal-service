@@ -1,0 +1,109 @@
+get:
+  summary: Download all animal photos as ZIP archive
+  description: |
+    Downloads all photos for a specific animal as a single ZIP archive.
+    The archive contains all images in their original format.
+  tags:
+    - "Animal Image"
+  security:
+    - AccessTokenAuth: []
+  parameters:
+    - name: "animalId"
+      in: "path"
+      required: true
+      description: ID of the animal
+      schema:
+        type: string
+        format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+  responses:
+    "200":
+      description: |
+        ZIP archive containing all animal photos.
+        The archive may also contain metadata files (info.json, errors.txt).
+      headers:
+        Content-Disposition:
+          schema:
+            type: string
+          example: 'attachment; filename="animal-photos.zip"'
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+    "400":
+      description: Invalid animal ID format
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error:
+                type: string
+            required:
+              - success
+              - error
+          example:
+            success: false
+            error: "Invalid animal ID format"
+    "401":
+      description: Unauthorized - Missing or invalid access token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error:
+                type: string
+            required:
+              - success
+              - error
+          example:
+            success: false
+            error: "Authentication required"
+    "404":
+      description: |
+        - Animal not found
+        - No images found for this animal
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error:
+                type: string
+            required:
+              - success
+              - error
+          examples:
+            AnimalNotFound:
+              value:
+                success: false
+                error: "Animal not found"
+            NoImages:
+              value:
+                success: false
+                error: "No images found for this animal"
+    "500":
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              error:
+                type: string
+            required:
+              - success
+              - error
+          example:
+            success: false
+            error: "Failed to create archive"

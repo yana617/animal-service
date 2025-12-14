@@ -23,6 +23,8 @@ paths:
     $ref: "./paths/image-order.yaml"
   /animals/{animalId}/images/${imageId}:
     $ref: "./paths/image.yaml"
+  /animals/{animalId}/images/archive:
+    $ref: "./paths/images-archive.yaml"
   /platforms:
     $ref: "./paths/platforms.yaml"
   /platforms/{platformId}:
