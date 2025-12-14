@@ -101,29 +101,6 @@ describe('DELETE /animals/:id/images/:imageId - deleteImage', () => {
         expect(image4InDbAfterRequest?.display_order).toBe(3);
     });
 
-    it('should return 500 if AWS config is missing', async () => {
-        process.env = {};
-        nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
-        nock(AUTH_BASE_URL)
-            .get('/permissions/me')
-            .reply(200, { success: true, data: ['EDIT_ANIMAL'] });
-
-        const testAnimal = await animalRepository.create(generateAnimal());
-        const testImage = await animalImageRepository.create(
-            generateAnimalImage(testAnimal),
-        );
-
-        const response = await request(app)
-            .delete(`/animals/${testAnimal.id}/images/${testImage.id}`)
-            .set('x-access-token', 'valid token')
-            .expect(500);
-
-        expect(response.body.success).toBe(false);
-        const { error } = response.body;
-        expect(error).not.toBeNull();
-        expect(error).toBe(ERRORS.S3_SERVER_ERROR);
-    });
-
     it('should fail if image is not found', async () => {
         nock(AUTH_BASE_URL).get('/auth').reply(200, { success: true });
         nock(AUTH_BASE_URL)

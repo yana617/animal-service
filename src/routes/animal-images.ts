@@ -14,6 +14,13 @@ import { updateImageOrderValidator } from '../middlewares/validators';
 
 const router = express.Router({ mergeParams: true });
 
+router.get(
+    '/archive',
+    authRequired,
+    asyncErrorHandler(checkAnimalExistence),
+    asyncErrorHandler(animalImageController.downloadImagesArchive),
+);
+
 router.post(
     '/',
     authRequired,

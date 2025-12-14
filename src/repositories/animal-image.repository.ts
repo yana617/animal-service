@@ -14,7 +14,10 @@ class AnimalImageRepository extends BaseRepository<AnimalImage> {
     }
 
     async getImagesByAnimal(animal: Animal): Promise<AnimalImage[]> {
-        return await this.repository.find({ where: { animal } });
+        return await this.repository.find({
+            where: { animal },
+            order: { display_order: 'ASC' },
+        });
     }
 
     async deleteByAnimal(animal: Animal): Promise<DeleteResult> {
