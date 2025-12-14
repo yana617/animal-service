@@ -7,6 +7,7 @@ import { AnimalImage } from '../database/entities/animal-image.entity';
 import { animalImageRepository } from '../repositories/animal-image.repository';
 import { updateImageOrder } from '../utils/update-image-order';
 import { S3Service } from '../services/s3.service';
+import { getFileExtension } from '../utils/get-file-extension';
 import {
     type FileType,
     type RequestWithAnimal,
@@ -195,9 +196,10 @@ const downloadImagesArchive = async (
                     image.image_key,
                 );
 
-                const safeName = `photo_${count++}`;
+                const extension = getFileExtension(image.image_key);
+                const fileName = `photo_${count++}${extension}`;
 
-                archive.append(fileStream, { name: safeName });
+                archive.append(fileStream, { name: fileName });
             } catch (error) {
                 const errorContent = `Failed to load image: ${image.image_key}\nError: ${error.message}`;
                 archive.append(errorContent, {
