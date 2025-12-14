@@ -27,7 +27,7 @@ describe('GET /stats/adopted-per-month request', () => {
             taken_home_date: new Date(
                 today.getFullYear(),
                 today.getMonth(),
-                today.getDay() > 15 ? 15 : today.getDay(),
+                today.getDate() > 15 ? 15 : today.getDate(),
             ),
         });
 
