@@ -1,17 +1,21 @@
 import { type Response } from 'express';
+import archiver from 'archiver';
 
 import { type Animal } from '../database/models/animal';
 import { ERRORS } from '../translates';
 import { AnimalImage } from '../database/entities/animal-image.entity';
 import { animalImageRepository } from '../repositories/animal-image.repository';
 import { updateImageOrder } from '../utils/update-image-order';
-import { deleteImageFromAWS } from '../utils/delete-image-from-AWS';
+import { S3Service } from '../services/s3.service';
+import { getFileExtension } from '../utils/get-file-extension';
 import {
     type FileType,
     type RequestWithAnimal,
     type ImageRequestParams,
     type UpdateOrderRequestBody,
 } from './types';
+
+const s3Service = new S3Service();
 
 const uploadImages = async (
     req: RequestWithAnimal<{ id: string }, Omit<Animal, 'id'>>,
@@ -114,7 +118,11 @@ const deleteImage = async (
     }
 
     try {
-        await deleteImageFromAWS(image.image_key);
+        if (!image.image_key) {
+            throw new Error(ERRORS.S3_KEY_REQUIRED);
+        }
+
+        await s3Service.deleteByKey(image.image_key);
     } catch (e) {
         return res.status(500).json({ success: false, error: e.message });
     }
@@ -138,8 +146,77 @@ const deleteImage = async (
     res.json({ success: true });
 };
 
+const CONCURRENCY_LIMIT = 3;
+
+const downloadImagesArchive = async (
+    req: RequestWithAnimal<ImageRequestParams, unknown>,
+    res: Response,
+): Promise<any> => {
+    const images = await animalImageRepository.getImagesByAnimal(req.animal);
+
+    if (!images || images.length === 0) {
+        return res
+            .status(404)
+            .json({ success: false, error: ERRORS.NO_IMAGES_FOUND });
+    }
+
+    const archive = archiver('zip', {
+        zlib: { level: 5 },
+    });
+
+    archive.on('error', (err) => {
+        if (!res.headersSent) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    const filename = `${req.animal.name}-photos-${Date.now()}.zip`;
+    res.set({
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+    });
+
+    archive.pipe(res);
+
+    const batches: AnimalImage[][] = [];
+
+    for (let i = 0; i < images.length; i += CONCURRENCY_LIMIT) {
+        batches.push(images.slice(i, i + CONCURRENCY_LIMIT));
+    }
+
+    let count = 1;
+
+    for (const batch of batches) {
+        const batchPromises = batch.map(async (image) => {
+            try {
+                const fileStream = await s3Service.getFileStream(
+                    image.image_key,
+                );
+
+                const extension = getFileExtension(image.image_key);
+                const fileName = `photo_${count++}${extension}`;
+
+                archive.append(fileStream, { name: fileName });
+            } catch (error) {
+                const errorContent = `Failed to load image: ${image.image_key}\nError: ${error.message}`;
+                archive.append(errorContent, {
+                    name: `errors/image_${image.id}_error.txt`,
+                });
+            }
+        });
+
+        await Promise.all(batchPromises);
+    }
+
+    await archive.finalize();
+};
+
 export const animalImageController = {
     uploadImages,
     updateOrder,
     deleteImage,
+    downloadImagesArchive,
 };

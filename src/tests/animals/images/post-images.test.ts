@@ -95,7 +95,7 @@ describe('POST /animals/:id/images - uploadImages', () => {
         nock(AUTH_BASE_URL).get('/auth').reply(401, { success: false });
 
         const response = await request(app)
-            .post('/animals/invalid-id/images')
+            .post(`/animals/${v4()}/images`)
             .set('x-access-token', 'valid token')
             .expect(401);
 
@@ -112,7 +112,7 @@ describe('POST /animals/:id/images - uploadImages', () => {
             .reply(200, { success: true, data: [] });
 
         const response = await request(app)
-            .post('/animals/invalid-id/images')
+            .post(`/animals/${v4()}/images`)
             .set('x-access-token', 'valid token')
             .expect(403);
 
