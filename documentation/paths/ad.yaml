@@ -1,0 +1,56 @@
+delete:
+  summary: Delete an ad
+  description: Deletes an advertising entry. Only admins or the owner of the ad can delete it.
+  tags:
+    - Ads
+  security:
+    - AccessTokenAuth: []
+  parameters:
+    - name: id
+      in: path
+      description: ID of the ad to delete
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "123e4567-e89b-12d3-a456-426614174000"
+  responses:
+    "200":
+      description: Ad successfully deleted
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+          example:
+            success: true
+    "401":
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Authentication required"
+    "403":
+      description: Forbidden - User is not admin and not the owner of the ad
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Forbidden"
+    "404":
+      description: Ad not found
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Ad not found"

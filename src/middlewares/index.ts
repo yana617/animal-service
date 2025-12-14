@@ -4,6 +4,7 @@ import { checkAnimalExistence } from './check-animal-existence';
 import { authRequired } from './auth-required';
 import { setToken } from './set-token';
 import { checkPermissions } from './check-permissions';
+import { setUser } from './set-user';
 
 export {
     asyncErrorHandler,
@@ -12,4 +13,5 @@ export {
     authRequired,
     setToken,
     checkPermissions,
+    setUser,
 };

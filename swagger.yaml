@@ -305,6 +305,8 @@ paths:
       summary: Update animal information
       tags:
         - Animal
+      security:
+        - AccessTokenAuth: []
       parameters:
         - name: animalId
           in: path
@@ -354,6 +356,8 @@ paths:
       summary: Delete animal
       tags:
         - Animal
+      security:
+        - AccessTokenAuth: []
       parameters:
         - name: animalId
           in: path
@@ -870,7 +874,7 @@ paths:
       summary: Get advertisement statistics grouped by time period
       description: |
         Retrieve statistics of advertisements grouped by week or month for specific time periods.
-        - Weekly stats: Returns 13 weeks of data (current week + previous 12 weeks)
+        - Weekly stats: Returns 12 weeks of data (current week + previous 12 weeks)
         - Monthly stats: Returns 12 months of data (current month + previous 11 months)
         Includes all time periods in the range, even those with zero advertisements.
       tags:
@@ -914,10 +918,6 @@ paths:
                                   type: string
                                   description: ISO week format (YYYY-Www)
                                   example: 2024-W40
-                                week_short:
-                                  type: string
-                                  description: Short week format (WW/YY)
-                                  example: 40/24
                                 start_date:
                                   type: string
                                   format: date
@@ -963,18 +963,15 @@ paths:
                         example: 42
                     example:
                       stats:
-                        - week: 2024-W40
-                          week_short: 40/24
+                        - week: 30.09-6.10
                           start_date: '2024-09-30'
                           end_date: '2024-10-06'
                           count: 5
                         - week: 2024-W41
-                          week_short: 41/24
                           start_date: '2024-10-07'
                           end_date: '2024-10-13'
                           count: 3
                         - week: 2024-W42
-                          week_short: 42/24
                           start_date: '2024-10-14'
                           end_date: '2024-10-20'
                           count: 7
@@ -1078,6 +1075,189 @@ paths:
               example:
                 success: false
                 error: Platform not found
+    post:
+      summary: Create a new ad
+      description: Creates a new advertising entry for an animal on a specific platform
+      tags:
+        - Ads
+      security:
+        - AccessTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - animal_id
+                - platform_id
+                - date
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                  description: ID of the user creating the ad
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                animal_id:
+                  type: string
+                  format: uuid
+                  description: ID of the animal being advertised
+                  example: 123e4567-e89b-12d3-a456-426614174001
+                platform_id:
+                  type: string
+                  format: uuid
+                  description: ID of the advertising platform
+                  example: 123e4567-e89b-12d3-a456-426614174002
+                date:
+                  type: string
+                  format: date
+                  description: Date when the ad was posted/created
+                  example: '2023-10-20'
+            example:
+              user_id: 123e4567-e89b-12d3-a456-426614174000
+              animal_id: 123e4567-e89b-12d3-a456-426614174001
+              platform_id: 123e4567-e89b-12d3-a456-426614174002
+              date: '2023-10-20'
+      responses:
+        '200':
+          description: Ad successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: 123e4567-e89b-12d3-a456-426614174003
+                      date:
+                        type: string
+                        format: date
+                        example: '2023-10-20'
+                      user_id:
+                        type: string
+                        format: uuid
+                        example: 123e4567-e89b-12d3-a456-426614174000
+                      animal_id:
+                        type: string
+                        format: uuid
+                        example: 123e4567-e89b-12d3-a456-426614174001
+                      platform_id:
+                        type: string
+                        format: uuid
+                        example: 123e4567-e89b-12d3-a456-426614174002
+              example:
+                success: true
+                data:
+                  id: 123e4567-e89b-12d3-a456-426614174003
+                  date: '2023-10-20'
+                  user_id: 123e4567-e89b-12d3-a456-426614174000
+                  animal_id: 123e4567-e89b-12d3-a456-426614174001
+                  platform_id: 123e4567-e89b-12d3-a456-426614174002
+        '400':
+          description: 'Validation errors (invalid UUID format, invalid date format, or missing required fields)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                success: false
+                errors:
+                  - type: field
+                    value: not-a-uuid
+                    msg: Invalid value
+                    path: user_id
+                    location: body
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Authentication required
+        '404':
+          description: Animal or platform not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                AnimalNotFound:
+                  summary: Animal not found
+                  value:
+                    success: false
+                    error: Animal not found
+                PlatformNotFound:
+                  summary: Platform not found
+                  value:
+                    success: false
+                    error: Platform not found
+  '/ads/{adId}':
+    delete:
+      summary: Delete an ad
+      description: Deletes an advertising entry. Only admins or the owner of the ad can delete it.
+      tags:
+        - Ads
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of the ad to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Ad successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+              example:
+                success: true
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Authentication required
+        '403':
+          description: Forbidden - User is not admin and not the owner of the ad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Forbidden
+        '404':
+          description: Ad not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: Ad not found
 components:
   securitySchemes:
     AccessTokenAuth:

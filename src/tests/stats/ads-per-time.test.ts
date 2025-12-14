@@ -58,7 +58,7 @@ describe('GET /stats/ads-per-time request', () => {
         expect(data).toHaveProperty('stats');
         expect(data).toHaveProperty('total');
         expect(data.total).toBe(4);
-        expect(data.stats).toHaveLength(13);
+        expect(data.stats).toHaveLength(12);
 
         const statsWithAds = data.stats.filter((stat: any) => stat.count > 0);
         expect(statsWithAds.length).toBeGreaterThan(0);
@@ -85,8 +85,6 @@ describe('GET /stats/ads-per-time request', () => {
             .expect(200);
 
         const { data } = response.body;
-
-        console.log(JSON.stringify(data, null, 2));
 
         expect(response.body.success).toBe(true);
         expect(data.total).toBe(4);
@@ -165,7 +163,7 @@ describe('GET /stats/ads-per-time request', () => {
 
         expect(response.body.success).toBe(true);
         expect(data.total).toBe(0);
-        expect(data.stats).toHaveLength(13);
+        expect(data.stats).toHaveLength(12);
 
         data.stats.forEach((stat: any) => {
             expect(stat.count).toBe(0);
