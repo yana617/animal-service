@@ -305,6 +305,8 @@ paths:
       summary: Update animal information
       tags:
         - Animal
+      security:
+        - AccessTokenAuth: []
       parameters:
         - name: animalId
           in: path
@@ -354,6 +356,8 @@ paths:
       summary: Delete animal
       tags:
         - Animal
+      security:
+        - AccessTokenAuth: []
       parameters:
         - name: animalId
           in: path

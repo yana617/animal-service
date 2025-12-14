@@ -3,12 +3,12 @@ get:
     tags:
         - Animal
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to return"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to return"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Returns animal info
@@ -41,13 +41,15 @@ patch:
     summary: Update animal information
     tags:
         - Animal
+    security:
+        - AccessTokenAuth: []
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to update"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to update"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Successfully updated
@@ -90,13 +92,15 @@ delete:
     summary: Delete animal
     tags:
         - Animal
+    security:
+        - AccessTokenAuth: []
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to delete"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to delete"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Successfully deleted (with images)
