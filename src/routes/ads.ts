@@ -29,6 +29,7 @@ router.post(
     authRequired,
     createAdValidator,
     checkValidationErrors,
+    setUser,
     asyncErrorHandler(adsController.createAd),
 );
 

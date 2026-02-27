@@ -96,16 +96,10 @@ post:
         schema:
           type: object
           required:
-            - user_id
             - animal_id
             - platform_id
             - date
           properties:
-            user_id:
-              type: string
-              format: uuid
-              description: ID of the user creating the ad
-              example: "123e4567-e89b-12d3-a456-426614174000"
             animal_id:
               type: string
               format: uuid
@@ -122,7 +116,6 @@ post:
               description: Date when the ad was posted/created
               example: "2023-10-20"
         example:
-          user_id: "123e4567-e89b-12d3-a456-426614174000"
           animal_id: "123e4567-e89b-12d3-a456-426614174001"
           platform_id: "123e4567-e89b-12d3-a456-426614174002"
           date: "2023-10-20"
