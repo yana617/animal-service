@@ -39,9 +39,10 @@ const getAdsForHomeless = async (
                 acc.push({
                     animal_id: row.animal_id,
                     animal_name: row.animal_name,
-                    ads: {
-                        [row.platform_id]: row.last_ad_date,
-                    },
+                    ads:
+                        row.platform_id && row.last_ad_date
+                            ? { [row.platform_id]: row.last_ad_date }
+                            : {},
                 });
             }
 
@@ -73,8 +74,12 @@ const getAdsForHomeless = async (
     });
 };
 
-export const createAd = async (req: Request, res: Response): Promise<void> => {
-    const { user_id, animal_id, platform_id, date } = req.body;
+export const createAd = async (
+    req: Request & { user: { id: string; role: string } },
+    res: Response,
+): Promise<void> => {
+    const user_id = req.user.id;
+    const { animal_id, platform_id, date } = req.body;
 
     const animal = await animalRepository.getById(animal_id);
 

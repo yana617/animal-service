@@ -170,7 +170,7 @@ const downloadImagesArchive = async (
         }
     });
 
-    const filename = `${req.animal.name}-photos-${Date.now()}.zip`;
+    const filename = `photos-${Date.now()}.zip`;
     res.set({
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${filename}"`,

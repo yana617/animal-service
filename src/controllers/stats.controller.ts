@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { Between } from 'typeorm';
+import { Between, In } from 'typeorm';
 
 import { animalRepository } from '../repositories/animal.repository';
 import { Status } from '../database/models/animal';
@@ -12,7 +12,7 @@ import { calculateMonthlyStats } from '../utils/stats/calculate-ads-per-month';
 
 const getAnimalsPerAge = async (req: Request, res: Response): Promise<void> => {
     const homelessAnimals = await animalRepository.getAll({
-        where: { status: Status.HOMELESS },
+        where: { status: In([Status.HOMELESS, Status.PREPARATION]) },
     });
 
     const agesInYears = homelessAnimals.map((animal) =>
