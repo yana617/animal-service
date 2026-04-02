@@ -52,7 +52,7 @@ export class BaseRepository<T extends ObjectLiteral> {
     }
 
     async deleteAll(): Promise<void> {
-        await this.repository.delete({});
+        await this.repository.createQueryBuilder().delete().execute();
     }
 
     createQueryBuilder(alias?: string): SelectQueryBuilder<T> {
