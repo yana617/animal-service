@@ -1,7 +1,7 @@
 get:
     summary: Get animals (only homeless by default)
     tags:
-        - 'Animals'
+        - Animal
     parameters:
         - name: type
           in: query
@@ -126,7 +126,7 @@ get:
 post:
     summary: Create new animal
     tags:
-        - "Animals"
+        - Animal
     security:
         - AccessTokenAuth: [] 
     requestBody:

@@ -1,7 +1,7 @@
 delete:
     summary: Delete image
     tags:
-        - "AnimalImage"
+        - "Animal Image"
     security:
         - AccessTokenAuth: []
     parameters:

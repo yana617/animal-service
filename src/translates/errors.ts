@@ -12,6 +12,9 @@ const EN = {
     IMAGE_NOT_FOUND: 'Image not found',
     IMAGE_IS_NOT_RELATED_TO_ANIMAL: 'Image is not related to the animal',
     ORDER_IS_BIGGER_THAN_IMAGES_COUNT: 'Order is bigger than images count',
+    PLATFORM_NOT_FOUND: 'Platform not found',
+    AD_NOT_FOUND: 'Ad not found',
+    NO_IMAGES_FOUND: 'No images found for this animal',
 };
 
 export const errors: Record<string, Record<keyof typeof EN, string>> = {
@@ -30,5 +33,8 @@ export const errors: Record<string, Record<keyof typeof EN, string>> = {
         IMAGE_NOT_FOUND: 'Картинка не найдена',
         IMAGE_IS_NOT_RELATED_TO_ANIMAL: 'Картинка не относится к указанному животному',
         ORDER_IS_BIGGER_THAN_IMAGES_COUNT: 'Очередность картинки не может быть больше чем количество картинок',
+        PLATFORM_NOT_FOUND: 'Платформа не найдена',
+        AD_NOT_FOUND: 'Обьявление не найдено',
+        NO_IMAGES_FOUND: 'Фото не найдены',
     },
 };

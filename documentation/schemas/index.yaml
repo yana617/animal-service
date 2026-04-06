@@ -8,3 +8,5 @@ Error:
   $ref: "./Error.yaml"
 AnimalShort:
   $ref: "./AnimalShort.yaml"
+Platform:
+  $ref: "./Platform.yaml"

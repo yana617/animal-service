@@ -1,14 +1,14 @@
 get:
     summary: Get animal full information
     tags:
-        - "Animals"
+        - Animal
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to return"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to return"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Returns animal info
@@ -40,14 +40,16 @@ get:
 patch:
     summary: Update animal information
     tags:
-        - "Animals"
+        - Animal
+    security:
+        - AccessTokenAuth: []
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to update"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to update"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Successfully updated
@@ -89,14 +91,16 @@ patch:
 delete:
     summary: Delete animal
     tags:
-        - "Animals"
+        - Animal
+    security:
+        - AccessTokenAuth: []
     parameters:
-      - name: "animalId"
-        in: "path"
-        description: "ID of animal to delete"
-        required: true
-        schema:
-            type: string
+        - name: "animalId"
+          in: "path"
+          description: "ID of animal to delete"
+          required: true
+          schema:
+              type: string
     responses:
         "200":
             description: Successfully deleted (with images)

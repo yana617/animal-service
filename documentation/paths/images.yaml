@@ -1,7 +1,7 @@
 post:
     summary: Upload images for an animal
     tags:
-        - "AnimalImage"
+        - "Animal Image"
     security:
         - AccessTokenAuth: []
     parameters:

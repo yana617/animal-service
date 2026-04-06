@@ -1,7 +1,7 @@
 patch:
     summary: Update image's order
     tags:
-        - "AnimalImage"
+        - "Animal Image"
     security:
         - AccessTokenAuth: []
     parameters:

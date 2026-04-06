@@ -9,6 +9,8 @@ import {
     Status,
 } from '../../database/models/animal';
 import type { AnimalImage } from '../../database/models/animal-image';
+import { type Platform } from '../../database/models/platform';
+import { type Ad } from '../../database/models/ad';
 
 export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     id: options.id || v4(),
@@ -24,7 +26,9 @@ export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     status: options.status || Status.HOMELESS,
     sterilized: options.sterilized || faker.datatype.boolean(),
     photos: options.photos || [],
+    ads: options.ads || [],
     height: options.height || faker.datatype.number({ min: 20, max: 80 }),
+    taken_home_date: options.taken_home_date || undefined,
 });
 
 export const generateAnimalImage = (
@@ -35,4 +39,24 @@ export const generateAnimalImage = (
     animal,
     image_key: `${animal.id}/${v4()}.png`,
     display_order: options.display_order || 1,
+});
+
+export const generatePlatform = (
+    options: Partial<Platform> = {},
+): Platform => ({
+    id: options.id || v4(),
+    name: options.name || faker.lorem.words(1),
+    ads: options.ads || [],
+});
+
+export const generateAd = (
+    animal: Animal,
+    platform: Platform,
+    options: Partial<Ad> = {},
+): Ad => ({
+    id: options.id || v4(),
+    user_id: options.user_id || v4(),
+    date: options.date || faker.date.past(),
+    animal,
+    platform,
 });

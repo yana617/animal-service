@@ -8,7 +8,7 @@ servers:
   - url: https://animal-service.dogcatbmpz.by/
     description: Production
 tags:
-  - name: Animals
+  - name: Animal
     description: CRUD for animals
 paths:
   /animals:
@@ -23,6 +23,22 @@ paths:
     $ref: "./paths/image-order.yaml"
   /animals/{animalId}/images/${imageId}:
     $ref: "./paths/image.yaml"
+  /animals/{animalId}/images/archive:
+    $ref: "./paths/images-archive.yaml"
+  /platforms:
+    $ref: "./paths/platforms.yaml"
+  /platforms/{platformId}:
+    $ref: "./paths/platform.yaml"
+  /stats/animals-per-age:
+    $ref: "./paths/animals-per-age.yaml"
+  /stats/adopted-per-month:
+    $ref: "./paths/adopted-per-month.yaml"
+  /stats/ads-per-time:
+    $ref: "./paths/ads-per-time.yaml"
+  /ads:
+    $ref: "./paths/ads.yaml"
+  /ads/{adId}:
+    $ref: "./paths/ad.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

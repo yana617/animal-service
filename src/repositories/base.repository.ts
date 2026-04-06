@@ -20,7 +20,7 @@ export class BaseRepository<T extends ObjectLiteral> {
         return await this.repository.findAndCount(params);
     }
 
-    async getAll(params: FindManyOptions<T> | undefined): Promise<T[]> {
+    async getAll(params?: FindManyOptions<T> | undefined): Promise<T[]> {
         return await this.repository.find(params);
     }
 
@@ -52,7 +52,7 @@ export class BaseRepository<T extends ObjectLiteral> {
     }
 
     async deleteAll(): Promise<void> {
-        await this.repository.delete({});
+        await this.repository.createQueryBuilder().delete().execute();
     }
 
     createQueryBuilder(alias?: string): SelectQueryBuilder<T> {

@@ -9,6 +9,7 @@ import {
     Status,
 } from '../models/animal';
 import { AnimalImage } from './animal-image.entity';
+import { Ad } from './ad.entity';
 
 @Entity()
 export class Animal implements AnimalModel {
@@ -88,4 +89,7 @@ export class Animal implements AnimalModel {
 
     @OneToMany(() => AnimalImage, (image) => image.animal)
     photos: AnimalImage[];
+
+    @OneToMany(() => Ad, (ad) => ad.animal)
+    ads: Ad[];
 }

@@ -1,0 +1,203 @@
+get:
+  summary: Get animals with ads information
+  description: Returns homeless animals with their advertising information across platforms. Can be sorted by specific platform ad dates.
+  tags:
+    - Ads
+  security:
+    - AccessTokenAuth: []
+  parameters:
+    - name: sortByPlatform
+      in: query
+      description: Platform ID to sort animals by their ad dates for this platform
+      required: false
+      schema:
+        type: string
+        format: uuid
+        example: "123e4567-e89b-12d3-a456-426614174000"
+    - name: sortOrder
+      in: query
+      description: Sort order for platform ad dates
+      required: false
+      schema:
+        type: string
+        enum: [ASC, DESC]
+        default: ASC
+        example: "ASC"
+  responses:
+    "200":
+      description: Returns animals with ads information
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    animal_id:
+                      type: string
+                      format: uuid
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                    animal_name:
+                      type: string
+                      example: "Buddy"
+                    ads:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        format: date
+                        description: "Platform ID as key, last ad date as value"
+                      example:
+                        "platform-uuid-1": "2023-10-01"
+                        "platform-uuid-2": "2023-10-15"
+    "400":
+      description: Fails with validation errors (invalid UUID format)
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+          example:
+            success: false
+            error: "Invalid platform ID format"
+    "401":
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Authentication required"
+    "404":
+      description: Platform not found (when provided platformId doesn't exist)
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Platform not found"
+post:
+  summary: Create a new ad
+  description: Creates a new advertising entry for an animal on a specific platform
+  tags:
+    - Ads
+  security:
+    - AccessTokenAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - animal_id
+            - platform_id
+            - date
+          properties:
+            animal_id:
+              type: string
+              format: uuid
+              description: ID of the animal being advertised
+              example: "123e4567-e89b-12d3-a456-426614174001"
+            platform_id:
+              type: string
+              format: uuid
+              description: ID of the advertising platform
+              example: "123e4567-e89b-12d3-a456-426614174002"
+            date:
+              type: string
+              format: date
+              description: Date when the ad was posted/created
+              example: "2023-10-20"
+        example:
+          animal_id: "123e4567-e89b-12d3-a456-426614174001"
+          platform_id: "123e4567-e89b-12d3-a456-426614174002"
+          date: "2023-10-20"
+  responses:
+    "200":
+      description: Ad successfully created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: "123e4567-e89b-12d3-a456-426614174003"
+                  date:
+                    type: string
+                    format: date
+                    example: "2023-10-20"
+                  user_id:
+                    type: string
+                    format: uuid
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  animal_id:
+                    type: string
+                    format: uuid
+                    example: "123e4567-e89b-12d3-a456-426614174001"
+                  platform_id:
+                    type: string
+                    format: uuid
+                    example: "123e4567-e89b-12d3-a456-426614174002"
+          example:
+            success: true
+            data:
+              id: "123e4567-e89b-12d3-a456-426614174003"
+              date: "2023-10-20"
+              user_id: "123e4567-e89b-12d3-a456-426614174000"
+              animal_id: "123e4567-e89b-12d3-a456-426614174001"
+              platform_id: "123e4567-e89b-12d3-a456-426614174002"
+    "400":
+      description: Validation errors (invalid UUID format, invalid date format, or missing required fields)
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+          example:
+            success: false
+            errors:
+              - type: "field"
+                value: "not-a-uuid"
+                msg: "Invalid value"
+                path: "user_id"
+                location: "body"
+    "401":
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Authentication required"
+    "404":
+      description: Animal or platform not found
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          examples:
+            AnimalNotFound:
+              summary: Animal not found
+              value:
+                success: false
+                error: "Animal not found"
+            PlatformNotFound:
+              summary: Platform not found
+              value:
+                success: false
+                error: "Platform not found"

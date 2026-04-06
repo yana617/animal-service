@@ -1,7 +1,7 @@
 get:
     summary: Get animals (only homeless)
     tags:
-        - 'Animals'
+        - Animal
     responses:
         '200':
             description: Returns existing animals

@@ -1,0 +1,73 @@
+get:
+    summary: Get platform by ID
+    description: Retrieve a specific platform by its ID (requires authentication)
+    tags:
+        - "Platform"
+    security:
+        - AccessTokenAuth: []
+    parameters:
+        - name: platformId
+          in: path
+          required: true
+          description: Platform UUID
+          schema:
+            type: string
+            format: uuid
+    responses:
+        '200':
+            description: Successful operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                $ref: "../schemas/Platform.yaml"
+        "400":
+            description: Fails with validation errors (id uuid)
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Platform not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Platform not found"
+delete:
+    summary: Delete a platform
+    description: Delete a platform by ID (requires authentication and MANAGE_PLATFORMS permission)
+    tags:
+        - "Platform"
+    security:
+        - AccessTokenAuth: []
+    parameters:
+        - name: platformId
+          in: path
+          required: true
+          description: Platform UUID
+          schema:
+            type: string
+            format: uuid
+    responses:
+        '204':
+            description: Platform deleted successfully
+        "401":
+            description: Unauthorized
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
