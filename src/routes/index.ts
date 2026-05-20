@@ -6,6 +6,7 @@ import { animalImagesRoute } from './animal-images';
 import { platformsRoute } from './platforms';
 import { statsRoute } from './stats';
 import { adsRoute } from './ads';
+import { documentsRoute } from './documents';
 import { checkValidationErrors } from '../middlewares';
 import { param } from 'express-validator';
 
@@ -21,5 +22,6 @@ router.use(
 router.use('/platforms', platformsRoute);
 router.use('/stats', statsRoute);
 router.use('/ads', adsRoute);
+router.use('/documents', documentsRoute);
 
 export default router;

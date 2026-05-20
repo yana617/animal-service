@@ -11,6 +11,14 @@ class AdRepository extends BaseRepository<Ad> {
         super(repository);
         this.repository = repository;
     }
+
+    async deleteByAnimalId(animalId: string): Promise<void> {
+        await this.repository
+            .createQueryBuilder()
+            .delete()
+            .where('animal_id = :animalId', { animalId })
+            .execute();
+    }
 }
 
 export const adRepository = new AdRepository(AppDataSource.getRepository(Ad));

@@ -10,6 +10,8 @@ servers:
 tags:
   - name: Animal
     description: CRUD for animals
+  - name: Document
+    description: Upload safe documents to S3
 paths:
   /animals:
     $ref: "./paths/animals.yaml"
@@ -39,6 +41,8 @@ paths:
     $ref: "./paths/ads.yaml"
   /ads/{adId}:
     $ref: "./paths/ad.yaml"
+  /documents:
+    $ref: "./paths/documents.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

@@ -7,6 +7,13 @@ export type WeeklyAdStats = {
     count: number;
 };
 
+const toLocalDateString = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export const calculateWeeklyStats = (
     ads: Ad[],
     endDate: Date,
@@ -40,20 +47,23 @@ export const calculateWeeklyStats = (
 
         weeklyStats.push({
             week: weekKey,
-            start_date: weekStart.toISOString().split('T')[0],
-            end_date: weekEnd.toISOString().split('T')[0],
+            start_date: toLocalDateString(weekStart),
+            end_date: toLocalDateString(weekEnd),
             count: 0,
         });
     }
 
     ads.forEach((ad) => {
-        const adDateTime = new Date(ad.date).getTime();
+        const adDateString =
+            typeof ad.date === 'string'
+                ? (ad.date as string).slice(0, 10)
+                : toLocalDateString(new Date(ad.date));
 
-        const weekStat = weeklyStats.find((stat) => {
-            const start = new Date(stat.start_date).getTime();
-            const end = new Date(stat.end_date).getTime();
-            return adDateTime >= start && adDateTime <= end;
-        });
+        const weekStat = weeklyStats.find(
+            (stat) =>
+                adDateString >= stat.start_date &&
+                adDateString <= stat.end_date,
+        );
 
         if (weekStat) {
             weekStat.count++;

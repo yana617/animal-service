@@ -12,7 +12,7 @@
       "typeorm": "typeorm-ts-node-commonjs -d ./src/database/index.ts",
       "migration:generate": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/update-animals-table -d ./src/database/index.ts",
       "lint": "eslint . --ext .ts",
-      "build:swagger": "swagger-cli bundle documentation/swagger.yaml --outfile swagger.yaml --type yaml"
+      "build:swagger": "npx swagger-cli bundle documentation/swagger.yaml --outfile swagger.yaml --type yaml"
    },
    "keywords": [
       "animal",
