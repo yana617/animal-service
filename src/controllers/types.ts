@@ -36,6 +36,11 @@ export type ImageRequestParams = {
 
 export type FileType = Express.Multer.File & { key: string };
 
+export type DocumentFileType = Express.Multer.File & {
+    key: string;
+    location: string;
+};
+
 export type RequestWithAnimal<T, T2> = Request<T, T2> & { animal: Animal };
 
 export type GetAdsQuery = {

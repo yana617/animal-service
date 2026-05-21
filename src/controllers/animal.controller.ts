@@ -7,6 +7,7 @@ import { type RequestWithAnimal, type GetAnimalsQuery } from './types';
 import { shuffleRandomSort } from '../utils/shuffle-random-sort';
 import { ERRORS } from '../translates';
 import { animalImageRepository } from '../repositories/animal-image.repository';
+import { adRepository } from '../repositories/ad.repository';
 
 const getAll = async (
     req: Request<{}, {}, {}, GetAnimalsQuery>,
@@ -252,6 +253,9 @@ const updateAnimal = async (
             .json({ success: false, error: ERRORS.DOG_HEIGHT_REQUIRED });
     }
 
+    const isBecomingAdopted =
+        req.animal.status !== Status.ADOPTED && status === Status.ADOPTED;
+
     await animalRepository.updateById(id, {
         name,
         type,
@@ -266,12 +270,15 @@ const updateAnimal = async (
         advertising_text,
         height: type === AnimalType.DOG ? height : undefined,
         sterilized,
-        taken_home_date:
-            req.animal.status !== Status.ADOPTED && status === Status.ADOPTED
-                ? new Date().toISOString()
-                : null as any,
+        taken_home_date: isBecomingAdopted
+            ? new Date().toISOString()
+            : (null as any),
         health_details,
     });
+
+    if (isBecomingAdopted) {
+        await adRepository.deleteByAnimalId(id);
+    }
 
     res.json({
         success: true,

@@ -1,0 +1,82 @@
+post:
+  summary: Upload safe documents to S3 under the docs/ folder
+  tags:
+    - "Document"
+  security:
+    - AccessTokenAuth: []
+  requestBody:
+    required: true
+    description: One or more document files (pdf, doc, docx, xls, xlsx, ppt, pptx,
+      txt, csv, rtf, odt, ods). Max 10 MB each, up to 15 files per request.
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            _any_number_:
+              type: string
+              format: binary
+        example:
+          "1": "report.pdf"
+          "2": "data.xlsx"
+  responses:
+    "200":
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              documents:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Original filename as uploaded
+                    link:
+                      type: string
+                      description: Public S3 URL of the stored document
+          example:
+            success: true
+            documents:
+              - name: "report.pdf"
+                link: "https://bucket.s3.region.amazonaws.com/docs/3f4a12c1-0000-0000-0000-0000\
+                  00000000.pdf"
+              - name: "data.xlsx"
+                link: "https://bucket.s3.region.amazonaws.com/docs/7c8b9d2e-0000-0000-0000-0000\
+                  00000000.xlsx"
+    "400":
+      description: No files uploaded
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "No files uploaded"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "403":
+      description: Token required
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "500":
+      description: Fails with S3 error or unsafe file type rejected by filter
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+          example:
+            success: false
+            error: "Only safe document types are allowed (pdf, doc, docx, xls, xlsx, ppt,
+              pptx, txt, csv, rtf, odt, ods)"
