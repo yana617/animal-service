@@ -18,6 +18,9 @@ const EN = {
     ONLY_SAFE_DOCUMENTS_ALLOWED:
         'Only safe document types are allowed (pdf, doc, docx, xls, xlsx, ppt, pptx, txt, csv, rtf, odt, ods)',
     NO_FILES_UPLOADED: 'No files uploaded',
+    HEALTH_RECORD_NOT_FOUND: 'Health record not found',
+    HEALTH_RECORD_IS_NOT_RELATED_TO_ANIMAL:
+        'Health record is not related to the animal',
 };
 
 export const errors: Record<string, Record<keyof typeof EN, string>> = {
@@ -42,5 +45,8 @@ export const errors: Record<string, Record<keyof typeof EN, string>> = {
         ONLY_SAFE_DOCUMENTS_ALLOWED:
             'Разрешены только безопасные типы документов (pdf, doc, docx, xls, xlsx, ppt, pptx, txt, csv, rtf, odt, ods)',
         NO_FILES_UPLOADED: 'Файлы не загружены',
+        HEALTH_RECORD_NOT_FOUND: 'Запись медкарты не найдена',
+        HEALTH_RECORD_IS_NOT_RELATED_TO_ANIMAL:
+            'Запись медкарты не относится к указанному животному',
     },
 };

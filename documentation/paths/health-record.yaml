@@ -1,0 +1,67 @@
+delete:
+    summary: Delete an animal health record
+    description: Deletes a specific health record entry. Requires EDIT_ANIMAL permission.
+    tags:
+        - Health Record
+    security:
+        - AccessTokenAuth: []
+    parameters:
+        - name: animalId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+    responses:
+        "200":
+            description: Successfully deleted
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+        "400":
+            description: Record does not belong to the animal / invalid id format
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Health record is not related to the animal"
+        "401":
+            description: Authentication required
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Forbidden (lacks EDIT_ANIMAL permission)
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Animal or health record not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    examples:
+                        AnimalNotFound:
+                            value:
+                                success: false
+                                error: "Animal not found"
+                        RecordNotFound:
+                            value:
+                                success: false
+                                error: "Health record not found"
