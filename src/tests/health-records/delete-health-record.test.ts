@@ -56,7 +56,7 @@ describe('DELETE /animals/:id/health-records/:recordId request', () => {
         expect(response.body.error).toBe(ERRORS.HEALTH_RECORD_NOT_FOUND);
     });
 
-    it("should return 400 when the record does not belong to the animal", async () => {
+    it('should return 400 when the record does not belong to the animal', async () => {
         mockAuth();
 
         const animalA = await animalRepository.create(generateAnimal());
@@ -67,9 +67,7 @@ describe('DELETE /animals/:id/health-records/:recordId request', () => {
         );
 
         const response = await request(app)
-            .delete(
-                `/animals/${animalB.id}/health-records/${recordOfA.id}`,
-            )
+            .delete(`/animals/${animalB.id}/health-records/${recordOfA.id}`)
             .set('x-access-token', 'valid token')
             .expect(400);
 
