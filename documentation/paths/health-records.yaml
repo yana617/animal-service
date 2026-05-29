@@ -1,0 +1,153 @@
+get:
+    summary: Get health records for an animal
+    description: Returns medical history of an animal (vaccinations, deworming, fleas/ticks treatments, vet visits, lab tests). Sorted by date DESC.
+    tags:
+        - Health Record
+    security:
+        - AccessTokenAuth: []
+    parameters:
+        - name: animalId
+          in: path
+          description: ID of the animal
+          required: true
+          schema:
+              type: string
+              format: uuid
+        - name: type
+          in: query
+          description: Optional filter by record type
+          required: false
+          schema:
+              type: string
+              enum: [vaccine, deworming, fleas-and-ticks, vet-visit, lab-test]
+    responses:
+        "200":
+            description: Returns the animal's health records
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                type: array
+                                items:
+                                    $ref: "../schemas/HealthRecord.yaml"
+        "400":
+            description: Invalid animal ID format
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+        "401":
+            description: Authentication required
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Animal not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Animal not found"
+post:
+    summary: Create a health record for an animal
+    description: |
+        Creates a new health record entry attached to the animal.
+        For `vaccine`, `deworming`, `fleas-and-ticks` types — usually requires `drug_name` and a `next_due_date`.
+        For `vet-visit` and `lab-test` — typically used with attached `files` (upload them via `/documents` first and pass the returned `name`/`link` pairs).
+    tags:
+        - Health Record
+    security:
+        - AccessTokenAuth: []
+    parameters:
+        - name: animalId
+          in: path
+          required: true
+          schema:
+              type: string
+              format: uuid
+    requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    required:
+                        - type
+                        - date
+                    properties:
+                        type:
+                            type: string
+                            enum: [vaccine, deworming, fleas-and-ticks, vet-visit, lab-test]
+                        date:
+                            type: string
+                            format: date
+                        drug_name:
+                            type: string
+                        next_due_date:
+                            type: string
+                            format: date
+                        notes:
+                            type: string
+                        files:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    name:
+                                        type: string
+                                    link:
+                                        type: string
+                example:
+                    type: vaccine
+                    date: "2024-05-20"
+                    drug_name: "Nobivac DHPPi"
+                    next_due_date: "2025-05-20"
+                    notes: "Annual booster"
+    responses:
+        "200":
+            description: Health record successfully created
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                example: true
+                            data:
+                                $ref: "../schemas/HealthRecord.yaml"
+        "400":
+            description: Validation errors
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/ValidationError.yaml"
+        "401":
+            description: Authentication required
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "403":
+            description: Forbidden (lacks EDIT_ANIMAL permission)
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+        "404":
+            description: Animal not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "../schemas/Error.yaml"
+                    example:
+                        success: false
+                        error: "Animal not found"

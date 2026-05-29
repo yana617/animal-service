@@ -1,5 +1,6 @@
 import { type Ad } from './ad';
 import type { AnimalImage } from './animal-image';
+import { type HealthRecord } from './health-record';
 
 export enum Place {
     MAIN_HOUSE = 'main-house',
@@ -48,5 +49,6 @@ export type Animal = {
     health_details?: string;
     photos: AnimalImage[];
     ads: Ad[];
+    health_records: HealthRecord[];
     photo?: AnimalImage;
 };

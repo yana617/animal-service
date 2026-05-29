@@ -10,3 +10,5 @@ AnimalShort:
   $ref: "./AnimalShort.yaml"
 Platform:
   $ref: "./Platform.yaml"
+HealthRecord:
+  $ref: "./HealthRecord.yaml"

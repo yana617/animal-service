@@ -8,6 +8,13 @@ import { shuffleRandomSort } from '../utils/shuffle-random-sort';
 import { ERRORS } from '../translates';
 import { animalImageRepository } from '../repositories/animal-image.repository';
 import { adRepository } from '../repositories/ad.repository';
+import { healthRecordRepository } from '../repositories/health-record.repository';
+import { HealthRecordType } from '../database/models/health-record';
+import { authServiceApi } from '../api/authService';
+import {
+    generateVaccinationReport,
+    type VaccinationRow,
+} from '../utils/generate-vaccination-report';
 
 const getAll = async (
     req: Request<{}, {}, {}, GetAnimalsQuery>,
@@ -151,7 +158,10 @@ const getAllShort = async (_, res: Response): Promise<void> => {
     });
 };
 
-const getAnimal = async (req: Request, res: Response): Promise<any> => {
+const getAnimal = async (
+    req: Request & { token?: string },
+    res: Response,
+): Promise<any> => {
     const { id } = req.params;
 
     const animalWithPhotos = await animalRepository
@@ -161,6 +171,35 @@ const getAnimal = async (req: Request, res: Response): Promise<any> => {
         .orderBy('photo.display_order', 'ASC')
         .getOne();
 
+    let canViewAllRecords = false;
+
+    if (req.token) {
+        try {
+            const userPermissions = await authServiceApi.getPermissions(
+                req.token,
+            );
+            canViewAllRecords = userPermissions.includes('VIEW_ANIMALS');
+        } catch {
+            canViewAllRecords = false;
+        }
+    }
+
+    let healthRecords: any[] = [];
+
+    if (animalWithPhotos) {
+        if (canViewAllRecords) {
+            healthRecords = await healthRecordRepository.getByAnimalId(
+                animalWithPhotos.id,
+            );
+        } else {
+            const latestVaccine = await healthRecordRepository.getByAnimalId(
+                animalWithPhotos.id,
+                HealthRecordType.VACCINE,
+            );
+            healthRecords = latestVaccine.slice(0, 1);
+        }
+    }
+
     res.json({
         success: true,
         data: {
@@ -169,6 +208,7 @@ const getAnimal = async (req: Request, res: Response): Promise<any> => {
                 id: photo.id,
                 url: `${process.env.AWS_BUCKET_URL}/${photo.image_key}`,
             })),
+            health_records: healthRecords,
         },
     });
 };
@@ -217,6 +257,7 @@ const createAnimal = async (
         health_details,
         photos: [],
         ads: [],
+        health_records: [],
     });
 
     res.json({
@@ -299,6 +340,42 @@ const deleteAnimal = async (
     });
 };
 
+const getVaccinationReport = async (
+    _req: Request,
+    res: Response,
+): Promise<void> => {
+    const records =
+        await healthRecordRepository.getVaccinationsByAnimalTypesAndStatuses(
+            [AnimalType.DOG, AnimalType.CAT],
+            [Status.HOMELESS, Status.PREPARATION],
+        );
+
+    const dogs: VaccinationRow[] = [];
+    const cats: VaccinationRow[] = [];
+
+    records.forEach((record) => {
+        const row: VaccinationRow = {
+            animal: { id: record.animal.id, name: record.animal.name },
+            record: { date: record.date, drug_name: record.drug_name },
+        };
+        if (record.animal.type === AnimalType.DOG) {
+            dogs.push(row);
+        } else if (record.animal.type === AnimalType.CAT) {
+            cats.push(row);
+        }
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+        'Content-Disposition',
+        'attachment; filename="vaccination-report.pdf"',
+    );
+
+    const doc = generateVaccinationReport(dogs, cats);
+    doc.pipe(res);
+    doc.end();
+};
+
 export const animalController = {
     getAll,
     getAnimal,
@@ -306,4 +383,5 @@ export const animalController = {
     updateAnimal,
     getAllShort,
     deleteAnimal,
+    getVaccinationReport,
 };

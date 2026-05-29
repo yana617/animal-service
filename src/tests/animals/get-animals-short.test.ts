@@ -35,6 +35,8 @@ describe('GET /animals/short', () => {
         expect(res.animals).toBeDefined();
         expect(res.animals.length).toEqual(3);
 
-        expect(res.animals.find((a) => a.name === animal1Mock.name).photo).toBeDefined();
+        expect(
+            res.animals.find((a) => a.name === animal1Mock.name).photo,
+        ).toBeDefined();
     });
 });

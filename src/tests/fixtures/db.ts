@@ -11,6 +11,10 @@ import {
 import type { AnimalImage } from '../../database/models/animal-image';
 import { type Platform } from '../../database/models/platform';
 import { type Ad } from '../../database/models/ad';
+import {
+    type HealthRecord,
+    HealthRecordType,
+} from '../../database/models/health-record';
 
 export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     id: options.id || v4(),
@@ -27,6 +31,7 @@ export const generateAnimal = (options: Partial<Animal> = {}): Animal => ({
     sterilized: options.sterilized || faker.datatype.boolean(),
     photos: options.photos || [],
     ads: options.ads || [],
+    health_records: options.health_records || [],
     height: options.height || faker.datatype.number({ min: 20, max: 80 }),
     taken_home_date: options.taken_home_date || undefined,
 });
@@ -59,4 +64,18 @@ export const generateAd = (
     date: options.date || faker.date.past(),
     animal,
     platform,
+});
+
+export const generateHealthRecord = (
+    animal: Animal,
+    options: Partial<HealthRecord> = {},
+): HealthRecord => ({
+    id: options.id || v4(),
+    type: options.type || HealthRecordType.VACCINE,
+    date: options.date || faker.date.past(),
+    drug_name: options.drug_name ?? faker.lorem.words(2),
+    next_due_date: options.next_due_date ?? faker.date.future(),
+    notes: options.notes,
+    files: options.files,
+    animal,
 });
