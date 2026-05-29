@@ -52,6 +52,44 @@ class HealthRecordRepository extends BaseRepository<HealthRecord> {
             .addOrderBy('record.date', 'DESC')
             .getMany();
     }
+
+    async getUpcomingVaccinations(statuses: Status[]): Promise<HealthRecord[]> {
+        const now = new Date();
+        const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const monthAfterNextStart = new Date(
+            now.getFullYear(),
+            now.getMonth() + 2,
+            1,
+        );
+
+        return await this.repository
+            .createQueryBuilder('record')
+            .innerJoinAndSelect('record.animal', 'animal')
+            .where('record.type = :type', { type: HealthRecordType.VACCINE })
+            .andWhere('record.next_due_date IS NOT NULL')
+            .andWhere('animal.status IN (:...statuses)', { statuses })
+            .andWhere('record.next_due_date >= :nextMonthStart', {
+                nextMonthStart,
+            })
+            .andWhere('record.next_due_date < :monthAfterNextStart', {
+                monthAfterNextStart,
+            })
+            // Keep only the latest vaccination record per animal so that an
+            // older record with a due date in the target month does not match
+            // an animal that has since been re-vaccinated.
+            .andWhere((qb) => {
+                const subQuery = qb
+                    .subQuery()
+                    .select('MAX(latest.date)')
+                    .from(HealthRecord, 'latest')
+                    .where('latest.animal_id = record.animal_id')
+                    .andWhere('latest.type = :type')
+                    .getQuery();
+                return `record.date = ${subQuery}`;
+            })
+            .orderBy('record.next_due_date', 'ASC')
+            .getMany();
+    }
 }
 
 export const healthRecordRepository = new HealthRecordRepository(

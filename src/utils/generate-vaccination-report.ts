@@ -1,3 +1,5 @@
+import path from 'path';
+
 import PDFDocument from 'pdfkit';
 
 import { type HealthRecord } from '../database/entities/health-record.entity';
@@ -7,6 +9,15 @@ export type VaccinationRow = {
     animal: Pick<Animal, 'id' | 'name'>;
     record: Pick<HealthRecord, 'date' | 'drug_name'>;
 };
+
+const FONT_REGULAR = 'CyrillicRegular';
+const FONT_BOLD = 'CyrillicBold';
+
+const FONT_REGULAR_PATH = path.join(
+    __dirname,
+    '../assets/fonts/Roboto-Regular.ttf',
+);
+const FONT_BOLD_PATH = path.join(__dirname, '../assets/fonts/Roboto-Bold.ttf');
 
 const formatDate = (date: Date | string): string => {
     const d = typeof date === 'string' ? new Date(date) : date;
@@ -24,11 +35,14 @@ const renderSection = (
     title: string,
     rows: VaccinationRow[],
 ): void => {
-    doc.fontSize(18).text(title, { underline: true });
+    doc.fontSize(18)
+        .font(FONT_BOLD)
+        .text(title, doc.page.margins.left, doc.y, { underline: true });
+    doc.font(FONT_REGULAR);
     doc.moveDown(0.5);
 
     if (rows.length === 0) {
-        doc.fontSize(12).text('No records');
+        doc.fontSize(12).text('Нет записей');
         doc.moveDown();
         return;
     }
@@ -39,24 +53,21 @@ const renderSection = (
         doc.page.width - doc.page.margins.left - doc.page.margins.right;
 
     const cols = [
-        { label: 'N', width: 30 },
-        { label: 'Name', width: 150 },
-        { label: 'Date - Drug name', width: pageWidth - 30 - 150 },
+        { label: '№', width: 30 },
+        { label: 'Кличка', width: 150 },
+        { label: 'Дата - Препарат', width: pageWidth - 30 - 150 },
     ];
 
     const drawHeader = (y: number): void => {
         let x = startX;
-        doc.fontSize(12).font('Helvetica-Bold');
+        doc.fontSize(12).font(FONT_BOLD);
         cols.forEach((col) => {
             doc.text(col.label, x + 4, y + 4, {
                 width: col.width - 8,
             });
             x += col.width;
         });
-        doc.moveTo(startX, y + 20)
-            .lineTo(startX + pageWidth, y + 20)
-            .stroke();
-        doc.font('Helvetica');
+        doc.font(FONT_REGULAR);
     };
 
     drawHeader(tableTop);
@@ -98,18 +109,35 @@ const renderSection = (
     doc.moveDown();
 };
 
+const getLatestVaccination = (rows: VaccinationRow[]): VaccinationRow[] => {
+    const latestRecords: Record<string, VaccinationRow> = {};
+    rows.forEach(row => {
+        if (!latestRecords[row.animal.id] || new Date(row.record.date) > new Date(latestRecords[row.animal.id].record.date)) {
+            latestRecords[row.animal.id] = row;
+        }
+    });
+    return Object.values(latestRecords);
+};
+
 export const generateVaccinationReport = (
     dogs: VaccinationRow[],
     cats: VaccinationRow[],
 ): PDFKit.PDFDocument => {
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
-    doc.fontSize(22).text('Vaccination report', { align: 'center' });
+    doc.registerFont(FONT_REGULAR, FONT_REGULAR_PATH);
+    doc.registerFont(FONT_BOLD, FONT_BOLD_PATH);
+    doc.font(FONT_REGULAR);
+
+    doc.fontSize(22).font(FONT_BOLD).text('Вакцинации', {
+        align: 'center',
+    });
+    doc.font(FONT_REGULAR);
     doc.moveDown();
 
-    renderSection(doc, 'Dogs', dogs);
-    doc.moveDown();
-    renderSection(doc, 'Cats', cats);
+    renderSection(doc, 'Собаки', getLatestVaccination(dogs));
+    doc.moveDown(3);
+    renderSection(doc, 'Кошки', getLatestVaccination(cats));
 
     return doc;
 };

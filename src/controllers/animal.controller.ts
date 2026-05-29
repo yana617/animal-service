@@ -178,7 +178,7 @@ const getAnimal = async (
             const userPermissions = await authServiceApi.getPermissions(
                 req.token,
             );
-            canViewAllRecords = userPermissions.includes('VIEW_ANIMAL');
+            canViewAllRecords = userPermissions.includes('VIEW_ANIMALS');
         } catch {
             canViewAllRecords = false;
         }
