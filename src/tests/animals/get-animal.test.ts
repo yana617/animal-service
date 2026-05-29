@@ -157,7 +157,7 @@ describe('GET /animals/:id request', () => {
         });
 
         test('Should return all health records when user has VIEW_ANIMAL permission', async () => {
-            mockPermissions(['VIEW_ANIMAL']);
+            mockPermissions(['VIEW_ANIMALS']);
 
             const animal = await animalRepository.create(generateAnimal());
 
