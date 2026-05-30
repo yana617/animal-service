@@ -127,7 +127,7 @@ const getLatestVaccination = (rows: VaccinationRow[]): VaccinationRow[] => {
 export const generateVaccinationReport = (
     dogs: VaccinationRow[],
     cats: VaccinationRow[],
-): PDFKit.PDFDocument => {
+): InstanceType<typeof PDFDocument> => {
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
     doc.registerFont(FONT_REGULAR, FONT_REGULAR_PATH);
