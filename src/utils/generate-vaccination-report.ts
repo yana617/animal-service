@@ -31,7 +31,7 @@ const formatDate = (date: Date | string): string => {
 };
 
 const renderSection = (
-    doc: PDFKit.PDFDocument,
+    doc: InstanceType<typeof PDFDocument>,
     title: string,
     rows: VaccinationRow[],
 ): void => {
@@ -80,11 +80,12 @@ const renderSection = (
             row.record.drug_name ?? ''
         }`;
 
-        const rowHeight = Math.max(
-            doc.heightOfString(n, { width: cols[0].width - 8 }),
-            doc.heightOfString(name, { width: cols[1].width - 8 }),
-            doc.heightOfString(dateDrug, { width: cols[2].width - 8 }),
-        ) + 8;
+        const rowHeight =
+            Math.max(
+                doc.heightOfString(n, { width: cols[0].width - 8 }),
+                doc.heightOfString(name, { width: cols[1].width - 8 }),
+                doc.heightOfString(dateDrug, { width: cols[2].width - 8 }),
+            ) + 8;
 
         if (currentY + rowHeight > doc.page.height - doc.page.margins.bottom) {
             doc.addPage();
@@ -111,8 +112,12 @@ const renderSection = (
 
 const getLatestVaccination = (rows: VaccinationRow[]): VaccinationRow[] => {
     const latestRecords: Record<string, VaccinationRow> = {};
-    rows.forEach(row => {
-        if (!latestRecords[row.animal.id] || new Date(row.record.date) > new Date(latestRecords[row.animal.id].record.date)) {
+    rows.forEach((row) => {
+        if (
+            !latestRecords[row.animal.id] ||
+            new Date(row.record.date) >
+                new Date(latestRecords[row.animal.id].record.date)
+        ) {
             latestRecords[row.animal.id] = row;
         }
     });
