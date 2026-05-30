@@ -7,6 +7,7 @@ import { platformsRoute } from './platforms';
 import { statsRoute } from './stats';
 import { adsRoute } from './ads';
 import { documentsRoute } from './documents';
+import { healthRecordsRoute } from './health-records';
 import { checkValidationErrors } from '../middlewares';
 import { param } from 'express-validator';
 
@@ -18,6 +19,12 @@ router.use(
     param('id').isUUID().notEmpty(),
     checkValidationErrors,
     animalImagesRoute,
+);
+router.use(
+    '/animals/:id/health-records',
+    param('id').isUUID().notEmpty(),
+    checkValidationErrors,
+    healthRecordsRoute,
 );
 router.use('/platforms', platformsRoute);
 router.use('/stats', statsRoute);

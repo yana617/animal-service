@@ -32,6 +32,11 @@ router.get(
 );
 
 router.get(
+    '/vaccination-report',
+    asyncErrorHandler(animalController.getVaccinationReport),
+);
+
+router.get(
     '/:id',
     param('id').isUUID().notEmpty(),
     checkValidationErrors,

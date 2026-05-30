@@ -12,11 +12,15 @@ tags:
     description: CRUD for animals
   - name: Document
     description: Upload safe documents to S3
+  - name: Health Record
+    description: Medical records for animals (vaccinations, deworming, vet visits, lab tests)
 paths:
   /animals:
     $ref: "./paths/animals.yaml"
   /animals/short:
     $ref: "./paths/animals-short.yaml"
+  /animals/vaccination-report:
+    $ref: "./paths/vaccination-report.yaml"
   /animals/{animalId}:
     $ref: "./paths/animal.yaml"
   /animals/{animalId}/images:
@@ -27,6 +31,10 @@ paths:
     $ref: "./paths/image.yaml"
   /animals/{animalId}/images/archive:
     $ref: "./paths/images-archive.yaml"
+  /animals/{animalId}/health-records:
+    $ref: "./paths/health-records.yaml"
+  /animals/{animalId}/health-records/{recordId}:
+    $ref: "./paths/health-record.yaml"
   /platforms:
     $ref: "./paths/platforms.yaml"
   /platforms/{platformId}:

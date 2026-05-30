@@ -1,0 +1,16 @@
+get:
+  tags:
+    - Animal
+  summary: Generate a PDF vaccination report
+  description: |
+    Generates a PDF file with the vaccination records of all dogs and cats
+    that have status `homeless` or `preparation`. Animals are grouped by type
+    (dogs / cats) and sorted alphabetically by name.
+  responses:
+    "200":
+      description: PDF report
+      content:
+        application/pdf:
+          schema:
+            type: string
+            format: binary

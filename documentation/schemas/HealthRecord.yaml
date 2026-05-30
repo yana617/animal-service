@@ -1,0 +1,37 @@
+type: object
+properties:
+    id:
+        type: string
+        format: uuid
+    type:
+        type: string
+        enum: [vaccine, deworming, fleas-and-ticks, vet-visit, lab-test]
+    date:
+        type: string
+        format: date
+    drug_name:
+        type: string
+        nullable: true
+        description: Required for vaccine / deworming / fleas-and-ticks
+    next_due_date:
+        type: string
+        format: date
+        nullable: true
+        description: When the next treatment / booster is due
+    notes:
+        type: string
+        nullable: true
+    files:
+        type: array
+        nullable: true
+        description: Attached files (vet visit reports, lab results, vaccine certificates). Upload via POST /documents first to get { name, link } pairs.
+        items:
+            type: object
+            properties:
+                name:
+                    type: string
+                link:
+                    type: string
+    animal_id:
+        type: string
+        format: uuid

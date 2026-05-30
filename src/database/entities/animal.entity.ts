@@ -10,6 +10,7 @@ import {
 } from '../models/animal';
 import { AnimalImage } from './animal-image.entity';
 import { Ad } from './ad.entity';
+import { HealthRecord } from './health-record.entity';
 
 @Entity()
 export class Animal implements AnimalModel {
@@ -92,4 +93,7 @@ export class Animal implements AnimalModel {
 
     @OneToMany(() => Ad, (ad) => ad.animal)
     ads: Ad[];
+
+    @OneToMany(() => HealthRecord, (record) => record.animal)
+    health_records: HealthRecord[];
 }
