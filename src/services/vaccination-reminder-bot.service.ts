@@ -116,6 +116,16 @@ const sendVaccinationReminder = async (): Promise<void> => {
 };
 
 export const scheduleVaccinationReminderBot = (): void => {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId) {
+        console.warn(
+            '[vaccination-reminder-bot] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set, cron jobs will not be scheduled.',
+        );
+        return;
+    }
+
     cron.schedule(
         CRON_EXPRESSION_DAY_10,
         () => {
