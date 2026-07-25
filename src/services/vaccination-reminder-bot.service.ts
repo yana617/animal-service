@@ -100,19 +100,23 @@ const buildMessage = async (): Promise<string> => {
 
 const sendVaccinationReminder = async (): Promise<void> => {
     const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const chatIdFull = process.env.TELEGRAM_CHAT_ID;
 
-    if (!token || !chatId) {
+    if (!token || !chatIdFull) {
         console.warn(
             '[vaccination-reminder-bot] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID is not set',
         );
         return;
     }
 
+    const [chatId, messageThreadId] = chatIdFull.split('_').map(Number);
+
     const bot = new TelegramBot(token, { polling: false });
     const message = await buildMessage();
 
-    await bot.sendMessage(chatId, message);
+    await bot.sendMessage(chatId, message, {
+        message_thread_id: messageThreadId,
+    });
 };
 
 export const scheduleVaccinationReminderBot = (): void => {
