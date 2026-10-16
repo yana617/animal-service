@@ -8,6 +8,7 @@ import { animalImageRepository } from '../repositories/animal-image.repository';
 import { updateImageOrder } from '../utils/update-image-order';
 import { S3Service } from '../services/s3.service';
 import { getFileExtension } from '../utils/get-file-extension';
+import { AppDataSource } from '../database';
 import {
     type FileType,
     type RequestWithAnimal,
@@ -23,17 +24,36 @@ const uploadImages = async (
 ): Promise<void> => {
     const files = req.files as FileType[];
 
-    const existedImages = await animalImageRepository.getImagesByAnimal(
-        req.animal,
-    );
-    const animalImagesCount = existedImages.length;
+    // Use transaction to ensure atomicity and avoid race conditions
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    for (let i = 0; i < files.length; i++) {
-        const image = new AnimalImage();
-        image.image_key = files[i].key;
-        image.display_order = animalImagesCount + i + 1;
-        image.animal = req.animal;
-        await animalImageRepository.create(image);
+    try {
+        // Get current max display_order within transaction
+        const result = await queryRunner.query(
+            `SELECT COALESCE(MAX(display_order), 0) as max_order 
+             FROM animal_image 
+             WHERE animal_id = $1`,
+            [req.animal.id],
+        );
+
+        const nextOrder = (result[0]?.max_order || 0) + 1;
+
+        for (let i = 0; i < files.length; i++) {
+            const image = new AnimalImage();
+            image.image_key = files[i].key;
+            image.display_order = nextOrder + i;
+            image.animal = req.animal;
+            await queryRunner.manager.save(image);
+        }
+
+        await queryRunner.commitTransaction();
+    } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+    } finally {
+        await queryRunner.release();
     }
 
     res.json({
@@ -123,7 +143,7 @@ const deleteImage = async (
         }
 
         await s3Service.deleteByKey(image.image_key);
-    } catch (e) {
+    } catch (e: any) {
         return res.status(500).json({ success: false, error: e.message });
     }
 
@@ -200,7 +220,7 @@ const downloadImagesArchive = async (
                 const fileName = `photo_${count++}${extension}`;
 
                 archive.append(fileStream, { name: fileName });
-            } catch (error) {
+            } catch (error: any) {
                 const errorContent = `Failed to load image: ${image.image_key}\nError: ${error.message}`;
                 archive.append(errorContent, {
                     name: `errors/image_${image.id}_error.txt`,
